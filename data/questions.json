@@ -1,0 +1,54 @@
+[
+  {
+    "id": "meta-feed-ranking",
+    "company": "Meta",
+    "role": "Software Engineer",
+    "interviewType": "technical",
+    "round": "coding",
+    "question": "Design a news feed ranking service that returns a personalized first page quickly.",
+    "topics": ["API design", "caching", "fanout", "scalability"],
+    "difficulty": "senior",
+    "sourceType": "reported_online",
+    "sourceNotes": "Representative system design prompt.",
+    "dateAdded": "2026-09-17"
+  },
+  {
+    "id": "sierra-idempotency",
+    "company": "Sierra",
+    "role": "Software Engineer",
+    "interviewType": "technical",
+    "round": "architecture",
+    "question": "An API client retries a request after a timeout. How would you make the operation safe and observable?",
+    "topics": ["idempotency", "error handling", "concurrency", "API design"],
+    "difficulty": "mid",
+    "sourceType": "asked_friend",
+    "sourceNotes": "Practice prompt for product engineering interviews.",
+    "dateAdded": "2026-09-17"
+  },
+  {
+    "id": "generic-rate-limiter",
+    "company": "Generic",
+    "role": "Software Engineer",
+    "interviewType": "system-design",
+    "round": "design",
+    "question": "Design a distributed rate limiter for a public API and explain its behavior during a regional outage.",
+    "topics": ["API design", "caching", "concurrency", "scalability"],
+    "difficulty": "senior",
+    "sourceType": "ai_generated",
+    "sourceNotes": "Baseline system design question.",
+    "dateAdded": "2026-09-17"
+  },
+  {
+    "id": "generic-project",
+    "company": "Generic",
+    "role": "Software Engineer",
+    "interviewType": "behavioral",
+    "round": "experience",
+    "question": "Tell me about a project where you changed your technical approach after learning something important.",
+    "topics": ["decision making", "communication", "tradeoffs"],
+    "difficulty": "mid",
+    "sourceType": "asked_me",
+    "sourceNotes": "Behavioral baseline question.",
+    "dateAdded": "2026-09-17"
+  }
+]
