@@ -23,14 +23,14 @@ export function useElevenLabsProvider(): VoiceProvider {
     onError: (message) => setError(typeof message === "string" ? message : "Voice session failed."),
   });
 
-  const start = useCallback(async () => {
+  const start = useCallback(async (prompt: string, firstMessage: string) => {
     setError(undefined);
     setTranscript([]);
-    await navigator.mediaDevices.getUserMedia({ audio: true });
-    const agentId = process.env.NEXT_PUBLIC_ELEVENLABS_AGENT_ID;
-    if (!agentId) throw new Error("NEXT_PUBLIC_ELEVENLABS_AGENT_ID is not configured.");
-    if (!agentId.startsWith("agent_")) throw new Error("NEXT_PUBLIC_ELEVENLABS_AGENT_ID must be the agent_ ID from ElevenLabs Conversational AI.");
-    conversation.startSession({ agentId });
+    setIsMuted(false);
+    const response = await fetch("/api/voice/session", { method: "POST" });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error);
+    await conversation.startSession({ signedUrl: data.signedUrl, overrides: { agent: { prompt: { prompt }, firstMessage } } });
   }, [conversation]);
 
   const end = useCallback(async () => conversation.endSession(), [conversation]);
@@ -41,6 +41,7 @@ export function useElevenLabsProvider(): VoiceProvider {
     transcript,
     error,
     start,
+    sendContext: (text: string) => conversation.sendContextualUpdate(text),
     end,
     toggleMute: () => {
       const nextMuted = !isMuted;

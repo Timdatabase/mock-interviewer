@@ -1,18 +1,13 @@
 import Interviewer from "@/components/Interviewer";
-import type { Difficulty, InterviewConfig, InterviewMode, InterviewType } from "@/lib/interview/types";
-
-type SearchParams = Promise<Record<string, string | string[] | undefined>>;
-
-export default async function InterviewPage({ searchParams }: { searchParams: SearchParams }) {
-  const params = await searchParams;
-  const value = (key: string, fallback: string) => typeof params[key] === "string" ? params[key] : fallback;
-  const config: InterviewConfig = {
-    company: value("company", "Generic"),
-    role: value("role", "Software Engineer"),
-    interviewType: value("interviewType", "technical") as InterviewType,
-    difficulty: value("difficulty", "mid") as Difficulty,
-    mode: value("mode", "question-bank") as InterviewMode,
-    researchUrl: value("researchUrl", "") || undefined,
-  };
-  return <Interviewer config={config} />;
+import { configSchema } from "@/lib/interview/config";
+import Link from "next/link";
+export default async function InterviewPage({ searchParams }: {
+    searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
+    const params = await searchParams;
+    const raw = Object.fromEntries(Object.entries(params).filter(([, v]) => typeof v === 'string'));
+    const result = configSchema.safeParse({ ...raw, tags: typeof raw.tags === 'string' ? raw.tags.split(',').filter(Boolean) : [], avoidRecent: raw.avoidRecent !== 'false' });
+    if (!result.success)
+        return <main className="shell"><h1>Let’s reset your room.</h1><p>These interview settings aren’t valid.</p><Link href="/">Return to setup →</Link></main>;
+    return <Interviewer config={result.data}/>;
 }

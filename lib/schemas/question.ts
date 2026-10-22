@@ -13,6 +13,12 @@ export const interviewQuestionSchema = z.object({
   difficulty: z.enum(["junior", "mid", "senior"]),
   sourceType: sourceTypeSchema,
   sourceNotes: z.string(),
+  title: z.string().default("Practice question"),
+  tags: z.array(z.string()).default([]),
+  problemDifficulty: z.enum(["easy", "medium", "hard"]).default("medium"),
+  examples: z.array(z.string()).default([]),
+  constraints: z.array(z.string()).default([]),
+  sourceUrl: z.string().url().optional(),
   dateAdded: z.string().date(),
 });
 

@@ -13,7 +13,8 @@ export interface VoiceProvider {
   isSpeaking: boolean;
   transcript: TranscriptMessage[];
   error?: string;
-  start: () => Promise<void>;
+  start: (prompt: string, firstMessage: string) => Promise<void>;
+  sendContext: (text: string) => void;
   end: () => Promise<void>;
   toggleMute: () => void;
   isMuted: boolean;

@@ -1,54 +1,452 @@
 [
   {
-    "id": "meta-feed-ranking",
-    "company": "Meta",
+    "id": "pair-budget",
+    "title": "Pair within budget",
+    "company": "Generic",
     "role": "Software Engineer",
     "interviewType": "technical",
     "round": "coding",
-    "question": "Design a news feed ranking service that returns a personalized first page quickly.",
-    "topics": ["API design", "caching", "fanout", "scalability"],
-    "difficulty": "senior",
-    "sourceType": "reported_online",
-    "sourceNotes": "Representative system design prompt.",
-    "dateAdded": "2026-09-17"
-  },
-  {
-    "id": "sierra-idempotency",
-    "company": "Sierra",
-    "role": "Software Engineer",
-    "interviewType": "technical",
-    "round": "architecture",
-    "question": "An API client retries a request after a timeout. How would you make the operation safe and observable?",
-    "topics": ["idempotency", "error handling", "concurrency", "API design"],
+    "question": "Given a list of item prices and a budget, return the indices of two distinct items whose prices add up exactly to the budget. Return an empty list if no pair exists. Any valid pair is acceptable.",
+    "topics": [
+      "arrays",
+      "hash-maps"
+    ],
+    "tags": [
+      "arrays",
+      "hash-maps"
+    ],
     "difficulty": "mid",
-    "sourceType": "asked_friend",
-    "sourceNotes": "Practice prompt for product engineering interviews.",
-    "dateAdded": "2026-09-17"
+    "problemDifficulty": "easy",
+    "examples": [
+      "prices = [8, 3, 11, 6], budget = 14 \u2192 [0, 3]"
+    ],
+    "constraints": [
+      "0 \u2264 number of prices \u2264 100,000",
+      "Prices and budget are nonnegative integers; duplicates are allowed."
+    ],
+    "sourceType": "ai_generated",
+    "sourceNotes": "Original practice prompt; references link to related practice, not copied statements.",
+    "dateAdded": "2026-10-21",
+    "sourceUrl": "https://leetcode.com/problems/two-sum/"
   },
   {
-    "id": "generic-rate-limiter",
+    "id": "unique-window",
+    "title": "Longest unique window",
     "company": "Generic",
     "role": "Software Engineer",
-    "interviewType": "system-design",
-    "round": "design",
-    "question": "Design a distributed rate limiter for a public API and explain its behavior during a regional outage.",
-    "topics": ["API design", "caching", "concurrency", "scalability"],
-    "difficulty": "senior",
+    "interviewType": "technical",
+    "round": "coding",
+    "question": "Return the length of the longest contiguous substring containing no repeated characters. Explain how you would handle an empty string.",
+    "topics": [
+      "strings",
+      "hash-maps"
+    ],
+    "tags": [
+      "strings",
+      "hash-maps"
+    ],
+    "difficulty": "mid",
+    "problemDifficulty": "medium",
+    "examples": [
+      "\"abcaef\" \u2192 5 (\"bcaef\")"
+    ],
+    "constraints": [
+      "Input contains at most 100,000 ASCII characters."
+    ],
     "sourceType": "ai_generated",
-    "sourceNotes": "Baseline system design question.",
-    "dateAdded": "2026-09-17"
+    "sourceNotes": "Original practice prompt; references link to related practice, not copied statements.",
+    "dateAdded": "2026-10-21",
+    "sourceUrl": "https://leetcode.com/problems/longest-substring-without-repeating-characters/"
   },
   {
-    "id": "generic-project",
+    "id": "merge-bookings",
+    "title": "Merge overlapping bookings",
+    "company": "Generic",
+    "role": "Software Engineer",
+    "interviewType": "technical",
+    "round": "coding",
+    "question": "Given booking intervals [start, end], merge all overlapping intervals and return the result sorted by start time. Intervals touching at an endpoint also merge.",
+    "topics": [
+      "arrays"
+    ],
+    "tags": [
+      "arrays"
+    ],
+    "difficulty": "mid",
+    "problemDifficulty": "medium",
+    "examples": [
+      "[[2,5], [4,8], [10,12]] \u2192 [[2,8], [10,12]]"
+    ],
+    "constraints": [
+      "0 \u2264 number of intervals \u2264 100,000",
+      "Each start is less than or equal to its end."
+    ],
+    "sourceType": "ai_generated",
+    "sourceNotes": "Original practice prompt; references link to related practice, not copied statements.",
+    "dateAdded": "2026-10-21"
+  },
+  {
+    "id": "tree-levels",
+    "title": "Read a tree by level",
+    "company": "Generic",
+    "role": "Software Engineer",
+    "interviewType": "technical",
+    "round": "coding",
+    "question": "Given a binary tree root, return its values grouped by depth, from the root downward and left to right within each level.",
+    "topics": [
+      "trees"
+    ],
+    "tags": [
+      "trees"
+    ],
+    "difficulty": "mid",
+    "problemDifficulty": "medium",
+    "examples": [
+      "Tree with root 7 and children 3, 9 \u2192 [[7], [3,9]]"
+    ],
+    "constraints": [
+      "The tree may be empty; at most 100,000 nodes."
+    ],
+    "sourceType": "ai_generated",
+    "sourceNotes": "Original practice prompt; references link to related practice, not copied statements.",
+    "dateAdded": "2026-10-21"
+  },
+  {
+    "id": "tree-height",
+    "title": "Measure tree height",
+    "company": "Generic",
+    "role": "Software Engineer",
+    "interviewType": "technical",
+    "round": "coding",
+    "question": "Return the maximum depth of a binary tree. An empty tree has depth zero; a single node has depth one.",
+    "topics": [
+      "trees"
+    ],
+    "tags": [
+      "trees"
+    ],
+    "difficulty": "mid",
+    "problemDifficulty": "easy",
+    "examples": [
+      "Root with two leaf children \u2192 2"
+    ],
+    "constraints": [
+      "At most 100,000 nodes; the tree may be highly unbalanced."
+    ],
+    "sourceType": "ai_generated",
+    "sourceNotes": "Original practice prompt; references link to related practice, not copied statements.",
+    "dateAdded": "2026-10-21"
+  },
+  {
+    "id": "route-hops",
+    "title": "Fewest route hops",
+    "company": "Generic",
+    "role": "Software Engineer",
+    "interviewType": "technical",
+    "round": "coding",
+    "question": "Given an unweighted directed graph represented by an adjacency list and two node IDs, return the minimum number of edges needed to reach the destination from the start. Return -1 if unreachable.",
+    "topics": [
+      "graphs"
+    ],
+    "tags": [
+      "graphs"
+    ],
+    "difficulty": "mid",
+    "problemDifficulty": "medium",
+    "examples": [
+      "A \u2192 [B,C], B \u2192 [D], C \u2192 [], D \u2192 []; A to D \u2192 2"
+    ],
+    "constraints": [
+      "At most 100,000 nodes and 200,000 edges.",
+      "Cycles and disconnected nodes are allowed."
+    ],
+    "sourceType": "ai_generated",
+    "sourceNotes": "Original practice prompt; references link to related practice, not copied statements.",
+    "dateAdded": "2026-10-21"
+  },
+  {
+    "id": "dependency-order",
+    "title": "Order dependent tasks",
+    "company": "Generic",
+    "role": "Software Engineer",
+    "interviewType": "technical",
+    "round": "coding",
+    "question": "Given task IDs and prerequisite pairs [task, prerequisite], return any valid order that completes all tasks after their prerequisites. Return an empty list when there is a cycle.",
+    "topics": [
+      "graphs"
+    ],
+    "tags": [
+      "graphs"
+    ],
+    "difficulty": "mid",
+    "problemDifficulty": "hard",
+    "examples": [
+      "Tasks [A,B,C], prerequisites [[C,A],[C,B]] \u2192 [A,B,C]"
+    ],
+    "constraints": [
+      "Task IDs are unique; at most 100,000 tasks."
+    ],
+    "sourceType": "ai_generated",
+    "sourceNotes": "Original practice prompt; references link to related practice, not copied statements.",
+    "dateAdded": "2026-10-21"
+  },
+  {
+    "id": "step-count",
+    "title": "Count staircase routes",
+    "company": "Generic",
+    "role": "Software Engineer",
+    "interviewType": "technical",
+    "round": "coding",
+    "question": "A staircase has n steps. Each move climbs one or two steps. Return the number of distinct sequences that reach the top. There is one way to climb zero steps.",
+    "topics": [
+      "dynamic-programming"
+    ],
+    "tags": [
+      "dynamic-programming"
+    ],
+    "difficulty": "mid",
+    "problemDifficulty": "easy",
+    "examples": [
+      "n = 4 \u2192 5"
+    ],
+    "constraints": [
+      "0 \u2264 n \u2264 40"
+    ],
+    "sourceType": "ai_generated",
+    "sourceNotes": "Original practice prompt; references link to related practice, not copied statements.",
+    "dateAdded": "2026-10-21"
+  },
+  {
+    "id": "coin-cost",
+    "title": "Minimum vouchers",
+    "company": "Generic",
+    "role": "Software Engineer",
+    "interviewType": "technical",
+    "round": "coding",
+    "question": "Given positive voucher denominations and a target total, return the minimum number of vouchers needed to reach exactly that total, or -1 if impossible. Each denomination can be used any number of times.",
+    "topics": [
+      "dynamic-programming",
+      "arrays"
+    ],
+    "tags": [
+      "dynamic-programming",
+      "arrays"
+    ],
+    "difficulty": "mid",
+    "problemDifficulty": "medium",
+    "examples": [
+      "denominations = [1,4,6], target = 8 \u2192 2"
+    ],
+    "constraints": [
+      "0 \u2264 target \u2264 10,000",
+      "1 \u2264 denominations.length \u2264 100"
+    ],
+    "sourceType": "ai_generated",
+    "sourceNotes": "Original practice prompt; references link to related practice, not copied statements.",
+    "dateAdded": "2026-10-21"
+  },
+  {
+    "id": "ownership",
+    "title": "Taking ownership",
     "company": "Generic",
     "role": "Software Engineer",
     "interviewType": "behavioral",
-    "round": "experience",
-    "question": "Tell me about a project where you changed your technical approach after learning something important.",
-    "topics": ["decision making", "communication", "tradeoffs"],
+    "round": "behavioral",
+    "question": "Tell me about a time you took responsibility for a problem outside your assigned work. What did you do and what changed?",
+    "topics": [
+      "ownership"
+    ],
+    "tags": [
+      "ownership"
+    ],
     "difficulty": "mid",
-    "sourceType": "asked_me",
-    "sourceNotes": "Behavioral baseline question.",
-    "dateAdded": "2026-09-17"
+    "problemDifficulty": "medium",
+    "examples": [],
+    "constraints": [],
+    "sourceType": "ai_generated",
+    "sourceNotes": "Original practice prompt; references link to related practice, not copied statements.",
+    "dateAdded": "2026-10-21"
+  },
+  {
+    "id": "conflict",
+    "title": "A technical disagreement",
+    "company": "Generic",
+    "role": "Software Engineer",
+    "interviewType": "behavioral",
+    "round": "behavioral",
+    "question": "Describe a disagreement with a teammate about a technical decision. How did you resolve it?",
+    "topics": [
+      "conflict"
+    ],
+    "tags": [
+      "conflict"
+    ],
+    "difficulty": "mid",
+    "problemDifficulty": "medium",
+    "examples": [],
+    "constraints": [],
+    "sourceType": "ai_generated",
+    "sourceNotes": "Original practice prompt; references link to related practice, not copied statements.",
+    "dateAdded": "2026-10-21"
+  },
+  {
+    "id": "teamwork",
+    "title": "Helping a team succeed",
+    "company": "Generic",
+    "role": "Software Engineer",
+    "interviewType": "behavioral",
+    "round": "behavioral",
+    "question": "Tell me about a time you helped a struggling teammate while managing your own commitments.",
+    "topics": [
+      "teamwork"
+    ],
+    "tags": [
+      "teamwork"
+    ],
+    "difficulty": "mid",
+    "problemDifficulty": "medium",
+    "examples": [],
+    "constraints": [],
+    "sourceType": "ai_generated",
+    "sourceNotes": "Original practice prompt; references link to related practice, not copied statements.",
+    "dateAdded": "2026-10-21"
+  },
+  {
+    "id": "failure",
+    "title": "Learning from failure",
+    "company": "Generic",
+    "role": "Software Engineer",
+    "interviewType": "behavioral",
+    "round": "behavioral",
+    "question": "Describe a decision or project that did not work out. What was your role, and what did you change afterward?",
+    "topics": [
+      "failure"
+    ],
+    "tags": [
+      "failure"
+    ],
+    "difficulty": "mid",
+    "problemDifficulty": "medium",
+    "examples": [],
+    "constraints": [],
+    "sourceType": "ai_generated",
+    "sourceNotes": "Original practice prompt; references link to related practice, not copied statements.",
+    "dateAdded": "2026-10-21"
+  },
+  {
+    "id": "ambiguity",
+    "title": "Moving through ambiguity",
+    "company": "Generic",
+    "role": "Software Engineer",
+    "interviewType": "behavioral",
+    "round": "behavioral",
+    "question": "Tell me about a project with unclear requirements. How did you decide what to do first?",
+    "topics": [
+      "ambiguity"
+    ],
+    "tags": [
+      "ambiguity"
+    ],
+    "difficulty": "mid",
+    "problemDifficulty": "medium",
+    "examples": [],
+    "constraints": [],
+    "sourceType": "ai_generated",
+    "sourceNotes": "Original practice prompt; references link to related practice, not copied statements.",
+    "dateAdded": "2026-10-21"
+  },
+  {
+    "id": "leadership",
+    "title": "Leading without authority",
+    "company": "Generic",
+    "role": "Software Engineer",
+    "interviewType": "behavioral",
+    "round": "behavioral",
+    "question": "Describe a time you influenced a team without formal authority. How did you earn support and measure the result?",
+    "topics": [
+      "leadership"
+    ],
+    "tags": [
+      "leadership"
+    ],
+    "difficulty": "mid",
+    "problemDifficulty": "medium",
+    "examples": [],
+    "constraints": [],
+    "sourceType": "ai_generated",
+    "sourceNotes": "Original practice prompt; references link to related practice, not copied statements.",
+    "dateAdded": "2026-10-21"
+  },
+  {
+    "id": "short-links",
+    "title": "A link shortening service",
+    "company": "Generic",
+    "role": "Software Engineer",
+    "interviewType": "system-design",
+    "round": "system-design",
+    "question": "Design a URL shortening service. Clarify scale, APIs, storage, redirect latency, expiration, and failure behavior.",
+    "topics": [
+      "scalability",
+      "caching"
+    ],
+    "tags": [
+      "scalability",
+      "caching"
+    ],
+    "difficulty": "mid",
+    "problemDifficulty": "medium",
+    "examples": [],
+    "constraints": [],
+    "sourceType": "ai_generated",
+    "sourceNotes": "Original practice prompt; references link to related practice, not copied statements.",
+    "dateAdded": "2026-10-21"
+  },
+  {
+    "id": "notifications",
+    "title": "Reliable notifications",
+    "company": "Generic",
+    "role": "Software Engineer",
+    "interviewType": "system-design",
+    "round": "system-design",
+    "question": "Design a notification service supporting email and push. Discuss retries, duplicates, delivery guarantees, and traffic spikes.",
+    "topics": [
+      "reliability",
+      "scalability"
+    ],
+    "tags": [
+      "reliability",
+      "scalability"
+    ],
+    "difficulty": "mid",
+    "problemDifficulty": "medium",
+    "examples": [],
+    "constraints": [],
+    "sourceType": "ai_generated",
+    "sourceNotes": "Original practice prompt; references link to related practice, not copied statements.",
+    "dateAdded": "2026-10-21"
+  },
+  {
+    "id": "rate-limit",
+    "title": "A distributed rate limiter",
+    "company": "Generic",
+    "role": "Software Engineer",
+    "interviewType": "system-design",
+    "round": "system-design",
+    "question": "Design a distributed rate limiter for a public API. Discuss fairness, latency, consistency, and regional failures.",
+    "topics": [
+      "caching",
+      "reliability"
+    ],
+    "tags": [
+      "caching",
+      "reliability"
+    ],
+    "difficulty": "mid",
+    "problemDifficulty": "medium",
+    "examples": [],
+    "constraints": [],
+    "sourceType": "ai_generated",
+    "sourceNotes": "Original practice prompt; references link to related practice, not copied statements.",
+    "dateAdded": "2026-10-21"
   }
 ]
