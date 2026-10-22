@@ -1,4 +1,5 @@
-export type VoiceConnectionStatus = "disconnected" | "connecting" | "connected" | "error";
+export type VoiceConnectionStatus =
+  "disconnected" | "connecting" | "connected" | "error";
 export type TranscriptRole = "user" | "agent";
 
 export interface TranscriptMessage {
@@ -14,6 +15,7 @@ export interface VoiceProvider {
   transcript: TranscriptMessage[];
   error?: string;
   start: (prompt: string, firstMessage: string) => Promise<void>;
+  sendMessage: (text: string) => void;
   sendContext: (text: string) => void;
   end: () => Promise<void>;
   toggleMute: () => void;

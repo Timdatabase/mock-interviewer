@@ -1,6 +1,11 @@
 import { z } from "zod";
 
-export const sourceTypeSchema = z.enum(["asked_me", "asked_friend", "reported_online", "ai_generated"]);
+export const sourceTypeSchema = z.enum([
+  "asked_me",
+  "asked_friend",
+  "reported_online",
+  "ai_generated",
+]);
 
 export const interviewQuestionSchema = z.object({
   id: z.string().min(1),
@@ -19,6 +24,16 @@ export const interviewQuestionSchema = z.object({
   examples: z.array(z.string()).default([]),
   constraints: z.array(z.string()).default([]),
   sourceUrl: z.string().url().optional(),
+  starterCode: z.string().default(""),
+  testCases: z
+    .array(
+      z.object({
+        name: z.string(),
+        args: z.array(z.unknown()),
+        expected: z.unknown(),
+      }),
+    )
+    .default([]),
   dateAdded: z.string().date(),
 });
 

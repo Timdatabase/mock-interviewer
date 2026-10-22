@@ -27,7 +27,60 @@
     "sourceType": "ai_generated",
     "sourceNotes": "Original practice prompt; references link to related practice, not copied statements.",
     "dateAdded": "2026-10-21",
-    "sourceUrl": "https://leetcode.com/problems/two-sum/"
+    "sourceUrl": "https://leetcode.com/problems/two-sum/",
+    "testCases": [
+      {
+        "name": "Example",
+        "args": [
+          [
+            8,
+            3,
+            11,
+            6
+          ],
+          14
+        ],
+        "expected": [
+          0,
+          3
+        ]
+      },
+      {
+        "name": "Duplicates",
+        "args": [
+          [
+            5,
+            5
+          ],
+          10
+        ],
+        "expected": [
+          0,
+          1
+        ]
+      },
+      {
+        "name": "No pair",
+        "args": [
+          [
+            1,
+            2,
+            3
+          ],
+          20
+        ],
+        "expected": []
+      },
+      {
+        "name": "Empty",
+        "args": [
+          [],
+          0
+        ],
+        "expected": []
+      }
+    ],
+    "starterCode": "function solve(prices, budget) {\n  // Explain your approach, then implement it here.\n  \n}\n"
   },
   {
     "id": "unique-window",
@@ -56,7 +109,38 @@
     "sourceType": "ai_generated",
     "sourceNotes": "Original practice prompt; references link to related practice, not copied statements.",
     "dateAdded": "2026-10-21",
-    "sourceUrl": "https://leetcode.com/problems/longest-substring-without-repeating-characters/"
+    "sourceUrl": "https://leetcode.com/problems/longest-substring-without-repeating-characters/",
+    "testCases": [
+      {
+        "name": "Example",
+        "args": [
+          "abcaef"
+        ],
+        "expected": 5
+      },
+      {
+        "name": "Repeated",
+        "args": [
+          "aaaa"
+        ],
+        "expected": 1
+      },
+      {
+        "name": "Empty",
+        "args": [
+          ""
+        ],
+        "expected": 0
+      },
+      {
+        "name": "Spaces",
+        "args": [
+          "a b a"
+        ],
+        "expected": 3
+      }
+    ],
+    "starterCode": "function solve(text) {\n  // Explain your approach, then implement it here.\n  \n}\n"
   },
   {
     "id": "merge-bookings",
@@ -83,7 +167,88 @@
     ],
     "sourceType": "ai_generated",
     "sourceNotes": "Original practice prompt; references link to related practice, not copied statements.",
-    "dateAdded": "2026-10-21"
+    "dateAdded": "2026-10-21",
+    "testCases": [
+      {
+        "name": "Example",
+        "args": [
+          [
+            [
+              2,
+              5
+            ],
+            [
+              4,
+              8
+            ],
+            [
+              10,
+              12
+            ]
+          ]
+        ],
+        "expected": [
+          [
+            2,
+            8
+          ],
+          [
+            10,
+            12
+          ]
+        ]
+      },
+      {
+        "name": "Touching",
+        "args": [
+          [
+            [
+              5,
+              9
+            ],
+            [
+              1,
+              5
+            ]
+          ]
+        ],
+        "expected": [
+          [
+            1,
+            9
+          ]
+        ]
+      },
+      {
+        "name": "Empty",
+        "args": [
+          []
+        ],
+        "expected": []
+      },
+      {
+        "name": "Nested",
+        "args": [
+          [
+            [
+              1,
+              10
+            ],
+            [
+              2,
+              3
+            ]
+          ]
+        ],
+        "expected": [
+          [
+            1,
+            10
+          ]
+        ]
+      }
+    ],
+    "starterCode": "function solve(intervals) {\n  // Explain your approach, then implement it here.\n  \n}\n"
   },
   {
     "id": "tree-levels",
@@ -105,11 +270,64 @@
       "Tree with root 7 and children 3, 9 \u2192 [[7], [3,9]]"
     ],
     "constraints": [
-      "The tree may be empty; at most 100,000 nodes."
+      "The tree may be empty; at most 100,000 nodes.",
+      "Nodes use { val, left, right }; an empty child is null."
     ],
     "sourceType": "ai_generated",
     "sourceNotes": "Original practice prompt; references link to related practice, not copied statements.",
-    "dateAdded": "2026-10-21"
+    "dateAdded": "2026-10-21",
+    "testCases": [
+      {
+        "name": "Example",
+        "args": [
+          {
+            "val": 7,
+            "left": {
+              "val": 3,
+              "left": null,
+              "right": null
+            },
+            "right": {
+              "val": 9,
+              "left": null,
+              "right": null
+            }
+          }
+        ],
+        "expected": [
+          [
+            7
+          ],
+          [
+            3,
+            9
+          ]
+        ]
+      },
+      {
+        "name": "Empty",
+        "args": [
+          null
+        ],
+        "expected": []
+      },
+      {
+        "name": "Single",
+        "args": [
+          {
+            "val": 1,
+            "left": null,
+            "right": null
+          }
+        ],
+        "expected": [
+          [
+            1
+          ]
+        ]
+      }
+    ],
+    "starterCode": "function solve(root) {\n  // Explain your approach, then implement it here.\n  \n}\n"
   },
   {
     "id": "tree-height",
@@ -131,11 +349,52 @@
       "Root with two leaf children \u2192 2"
     ],
     "constraints": [
-      "At most 100,000 nodes; the tree may be highly unbalanced."
+      "At most 100,000 nodes; the tree may be highly unbalanced.",
+      "Nodes use { val, left, right }; an empty child is null."
     ],
     "sourceType": "ai_generated",
     "sourceNotes": "Original practice prompt; references link to related practice, not copied statements.",
-    "dateAdded": "2026-10-21"
+    "dateAdded": "2026-10-21",
+    "testCases": [
+      {
+        "name": "Example",
+        "args": [
+          {
+            "val": 7,
+            "left": {
+              "val": 3,
+              "left": null,
+              "right": null
+            },
+            "right": {
+              "val": 9,
+              "left": null,
+              "right": null
+            }
+          }
+        ],
+        "expected": 2
+      },
+      {
+        "name": "Empty",
+        "args": [
+          null
+        ],
+        "expected": 0
+      },
+      {
+        "name": "Single",
+        "args": [
+          {
+            "val": 1,
+            "left": null,
+            "right": null
+          }
+        ],
+        "expected": 1
+      }
+    ],
+    "starterCode": "function solve(root) {\n  // Explain your approach, then implement it here.\n  \n}\n"
   },
   {
     "id": "route-hops",
@@ -162,7 +421,70 @@
     ],
     "sourceType": "ai_generated",
     "sourceNotes": "Original practice prompt; references link to related practice, not copied statements.",
-    "dateAdded": "2026-10-21"
+    "dateAdded": "2026-10-21",
+    "testCases": [
+      {
+        "name": "Example",
+        "args": [
+          {
+            "A": [
+              "B",
+              "C"
+            ],
+            "B": [
+              "D"
+            ],
+            "C": [],
+            "D": []
+          },
+          "A",
+          "D"
+        ],
+        "expected": 2
+      },
+      {
+        "name": "Unreachable",
+        "args": [
+          {
+            "A": [],
+            "B": []
+          },
+          "A",
+          "B"
+        ],
+        "expected": -1
+      },
+      {
+        "name": "Same node",
+        "args": [
+          {
+            "A": []
+          },
+          "A",
+          "A"
+        ],
+        "expected": 0
+      },
+      {
+        "name": "Cycle",
+        "args": [
+          {
+            "A": [
+              "B"
+            ],
+            "B": [
+              "A",
+              "C"
+            ],
+            "C": []
+          },
+          "A",
+          "C"
+        ],
+        "expected": 2
+      }
+    ],
+    "starterCode": "function solve(graph, start, destination) {\n  // Explain your approach, then implement it here.\n  \n}\n"
   },
   {
     "id": "dependency-order",
@@ -188,7 +510,77 @@
     ],
     "sourceType": "ai_generated",
     "sourceNotes": "Original practice prompt; references link to related practice, not copied statements.",
-    "dateAdded": "2026-10-21"
+    "dateAdded": "2026-10-21",
+    "testCases": [
+      {
+        "name": "Example",
+        "args": [
+          [
+            "A",
+            "B",
+            "C"
+          ],
+          [
+            [
+              "C",
+              "A"
+            ],
+            [
+              "C",
+              "B"
+            ]
+          ]
+        ],
+        "expected": [
+          "A",
+          "B",
+          "C"
+        ]
+      },
+      {
+        "name": "Cycle",
+        "args": [
+          [
+            "A",
+            "B"
+          ],
+          [
+            [
+              "A",
+              "B"
+            ],
+            [
+              "B",
+              "A"
+            ]
+          ]
+        ],
+        "expected": []
+      },
+      {
+        "name": "Empty",
+        "args": [
+          [],
+          []
+        ],
+        "expected": []
+      },
+      {
+        "name": "Independent",
+        "args": [
+          [
+            "X",
+            "Y"
+          ],
+          []
+        ],
+        "expected": [
+          "X",
+          "Y"
+        ]
+      }
+    ],
+    "starterCode": "function solve(tasks, prerequisites) {\n  // Explain your approach, then implement it here.\n  \n}\n"
   },
   {
     "id": "step-count",
@@ -214,7 +606,38 @@
     ],
     "sourceType": "ai_generated",
     "sourceNotes": "Original practice prompt; references link to related practice, not copied statements.",
-    "dateAdded": "2026-10-21"
+    "dateAdded": "2026-10-21",
+    "testCases": [
+      {
+        "name": "Example",
+        "args": [
+          4
+        ],
+        "expected": 5
+      },
+      {
+        "name": "Zero",
+        "args": [
+          0
+        ],
+        "expected": 1
+      },
+      {
+        "name": "One",
+        "args": [
+          1
+        ],
+        "expected": 1
+      },
+      {
+        "name": "Ten",
+        "args": [
+          10
+        ],
+        "expected": 89
+      }
+    ],
+    "starterCode": "function solve(n) {\n  // Explain your approach, then implement it here.\n  \n}\n"
   },
   {
     "id": "coin-cost",
@@ -243,7 +666,56 @@
     ],
     "sourceType": "ai_generated",
     "sourceNotes": "Original practice prompt; references link to related practice, not copied statements.",
-    "dateAdded": "2026-10-21"
+    "dateAdded": "2026-10-21",
+    "testCases": [
+      {
+        "name": "Example",
+        "args": [
+          [
+            1,
+            4,
+            6
+          ],
+          8
+        ],
+        "expected": 2
+      },
+      {
+        "name": "Impossible",
+        "args": [
+          [
+            3,
+            5
+          ],
+          7
+        ],
+        "expected": -1
+      },
+      {
+        "name": "Zero",
+        "args": [
+          [
+            2,
+            3
+          ],
+          0
+        ],
+        "expected": 0
+      },
+      {
+        "name": "Non-greedy",
+        "args": [
+          [
+            1,
+            3,
+            4
+          ],
+          6
+        ],
+        "expected": 2
+      }
+    ],
+    "starterCode": "function solve(denominations, target) {\n  // Explain your approach, then implement it here.\n  \n}\n"
   },
   {
     "id": "ownership",
