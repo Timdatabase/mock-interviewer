@@ -6,7 +6,7 @@ export default async function InterviewPage({ searchParams }: {
 }) {
     const params = await searchParams;
     const raw = Object.fromEntries(Object.entries(params).filter(([, v]) => typeof v === 'string'));
-    const result = configSchema.safeParse({ ...raw, tags: typeof raw.tags === 'string' ? raw.tags.split(',').filter(Boolean) : [], avoidRecent: raw.avoidRecent !== 'false' });
+    const result = configSchema.safeParse({ ...raw, tags: typeof raw.tags === 'string' ? raw.tags.split(',').filter(Boolean) : [], avoidRecent: Array.isArray(params.avoidRecent) ? params.avoidRecent.includes('true') : params.avoidRecent !== 'false' });
     if (!result.success)
         return <main className="shell"><h1>Let’s reset your room.</h1><p>These interview settings aren’t valid.</p><Link href="/">Return to setup →</Link></main>;
     return <Interviewer config={result.data}/>;
