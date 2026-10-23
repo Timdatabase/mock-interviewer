@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import type { PublicQuestion } from "@/lib/interview/questions";
 import { startRun } from "@/lib/runner/client";
 import { parseTests } from "@/lib/runner/tests";
+import { languages, type CodeLanguage } from "@/lib/runner/languages";
 import type { RunResult } from "@/lib/runner/types";
 const CodeEditor = dynamic(() => import("./CodeEditor"), {
   ssr: false,
@@ -11,11 +12,14 @@ const CodeEditor = dynamic(() => import("./CodeEditor"), {
 });
 export interface RunRecord {
   questionId: string;
+  language: CodeLanguage;
   code: string;
   result: RunResult;
 }
 export default function CodeWorkspace({
   question,
+  language,
+  onLanguageChange,
   code,
   onChange,
   onCursor,
@@ -24,6 +28,8 @@ export default function CodeWorkspace({
   voiceConnected,
 }: {
   question: PublicQuestion;
+  language: CodeLanguage;
+  onLanguageChange: (language: CodeLanguage) => void;
   code: string;
   onChange: (code: string) => void;
   onCursor: (line: number) => void;
@@ -54,11 +60,16 @@ export default function CodeWorkspace({
       const parsed = parseTests(tests);
       setRunning(true);
       setTab("output");
-      const task = startRun({ code, questionId: question.id, tests: parsed });
+      const task = startRun({
+        code,
+        language,
+        questionId: question.id,
+        tests: parsed,
+      });
       active.current = task;
       const result = await task.result;
       if (!mounted.current) return;
-      const record = { questionId: question.id, code, result };
+      const record = { questionId: question.id, language, code, result };
       setRun(record);
       onRun(record);
     } catch (failure) {
@@ -75,14 +86,43 @@ export default function CodeWorkspace({
     <section className="coding-panel">
       <div className="code-titlebar">
         <div className="file-tab">
-          <span>JS</span> solution.js
+          <span>
+            {language === "python"
+              ? "PY"
+              : language === "typescript"
+                ? "TS"
+                : "JS"}
+          </span>{" "}
+          {languages.find((item) => item.id === language)?.file}
         </div>
-        <span className="runtime-label">JavaScript · isolated runtime</span>
+        <label className="language-select">
+          <span className="sr-only">Programming language</span>
+          <select
+            value={language}
+            disabled={running}
+            onChange={(event) =>
+              onLanguageChange(event.target.value as CodeLanguage)
+            }
+          >
+            {languages.map((item) => (
+              <option key={item.id} value={item.id}>
+                {item.label}
+              </option>
+            ))}
+          </select>
+        </label>
       </div>
-      <CodeEditor code={code} onChange={onChange} onCursor={onCursor} />
+      <CodeEditor
+        language={language}
+        code={code}
+        onChange={onChange}
+        onCursor={onCursor}
+      />
       <div className="execution-toolbar">
         <span>
-          Implement <code>solve(...)</code> · 2s limit · no network access
+          Implement <code>solve(...)</code> ·{" "}
+          {language === "python" ? "2.5s" : "2s"} execution limit · isolated
+          runtime
         </span>
         <div>
           {running ? (
@@ -171,7 +211,7 @@ export default function CodeWorkspace({
               </div>
             ) : run ? (
               <>
-                {run.code !== code && (
+                {(run.code !== code || run.language !== language) && (
                   <p className="stale-run">
                     Code has changed since this run. Run again for current
                     results.

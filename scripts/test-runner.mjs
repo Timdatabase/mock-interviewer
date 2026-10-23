@@ -10,6 +10,10 @@ import variant from "@jitl/quickjs-singlefile-browser-release-sync";
 const directory = await mkdtemp(join(tmpdir(), "signal-runner-"));
 for (const [source, output] of [
   ["lib/runner/validate.ts", "validate"],
+  ["lib/interview/limits.ts", "limits"],
+  ["lib/runner/python-program.ts", "python-program"],
+  ["lib/runner/python-client.ts", "python-client"],
+  ["lib/runner/languages.ts", "languages"],
   ["lib/runner/engine.ts", "engine"],
   ["lib/runner/tests.ts", "tests"],
   ["lib/interview/custom.ts", "custom"],
@@ -21,7 +25,10 @@ for (const [source, output] of [
         module: ts.ModuleKind.ESNext,
       },
     })
-    .outputText.replace('"./validate"', '"./validate.mjs"');
+    .outputText.replace('"./validate"', '"./validate.mjs"')
+    .replace('"./limits"', '"./limits.mjs"')
+    .replace('"./python-program"', '"./python-program.mjs"')
+    .replace('"../interview/limits"', '"./limits.mjs"');
   await writeFile(join(directory, output + ".mjs"), code);
 }
 after(() => rm(directory, { recursive: true }));
@@ -148,5 +155,141 @@ test("rejects async outputs and bounds allocation and recursion", () => {
   ]) {
     const result = execute(QuickJS, { code, questionId: "custom", tests: one });
     assert(result.error || result.cases[0]?.error);
+  }
+});
+
+test("TypeScript runs after removing type annotations", async () => {
+  const { transform } = await import("sucrase");
+  const code = transform(
+    "function solve(n: number): number { const value: number = n + 1; return value; }",
+    { transforms: ["typescript"] },
+  ).code;
+  const result = execute(QuickJS, {
+    code,
+    questionId: "custom",
+    tests: [{ name: "Typed", args: [4], expected: 5 }],
+  });
+  assert(result.cases[0].passed);
+});
+
+test("larger question banks accept long prompts and enforce the new boundaries", () => {
+  assert.equal(
+    parseCustomQuestions("x".repeat(50000), "large")[0].question.length,
+    50000,
+  );
+  assert.throws(
+    () => parseCustomQuestions("x".repeat(50001), "large"),
+    /50,000/,
+  );
+  const batch = Array(10).fill("x".repeat(49000)).join("\n---\n");
+  assert.equal(parseCustomQuestions(batch, "large").length, 10);
+  assert.throws(
+    () => parseCustomQuestions("x".repeat(500001), "large"),
+    /500,000/,
+  );
+});
+
+test("Python executes real functions, prints output, and reports exceptions", async () => {
+  const { loadPyodide } = await import("pyodide");
+  const python = await loadPyodide();
+  const { pythonProgram } = await import(
+    pathToFileURL(join(directory, "python-program.mjs"))
+  );
+  const request = {
+    code: 'def solve(n):\n    print("checking", n)\n    return n + 1',
+    questionId: "custom",
+    tests: [{ name: "Python", args: [4], expected: 5 }],
+  };
+  const result = JSON.parse(python.runPython(pythonProgram(request)));
+  assert.equal(result.cases[0].actual, 5);
+  assert.deepEqual(result.logs, ["checking 4"]);
+  const failed = JSON.parse(
+    python.runPython(
+      pythonProgram({
+        ...request,
+        code: 'def solve(n):\n    raise ValueError("bad input")',
+      }),
+    ),
+  );
+  assert.match(failed.cases[0].error, /bad input/);
+  const invalid = JSON.parse(
+    python.runPython(pythonProgram({ ...request, code: "def solve(:" })),
+  );
+  assert.match(invalid.error, /SyntaxError/);
+  const { starterFor } = await import(
+    pathToFileURL(join(directory, "languages.mjs"))
+  );
+  assert.match(
+    starterFor("python", { starterCode: "function solve(root) {}" }),
+    /def solve\(root\)/,
+  );
+});
+
+test("Python bridge uses a separate sandbox origin and cleans up after results", async () => {
+  const oldDocument = globalThis.document,
+    oldLocation = globalThis.location;
+  let frame, peer;
+  try {
+    globalThis.location = { origin: "http://localhost:3000" };
+    globalThis.document = {
+      createElement() {
+        frame = {
+          attributes: {},
+          setAttribute(k, v) {
+            this.attributes[k] = v;
+          },
+          remove() {
+            this.removed = true;
+          },
+          contentWindow: {
+            postMessage(_data, target, ports) {
+              assert.equal(target, "*");
+              peer = ports[0];
+              peer.onmessage = () => {
+                peer.postMessage({ kind: "ready" });
+                peer.postMessage({
+                  kind: "result",
+                  cases: [{ actual: 5 }],
+                  logs: [],
+                  durationMs: 1,
+                });
+              };
+              peer.start();
+            },
+          },
+        };
+        return frame;
+      },
+      body: {
+        appendChild() {
+          queueMicrotask(() => frame.onload());
+        },
+      },
+    };
+    const { startPythonRun } = await import(
+      pathToFileURL(join(directory, "python-client.mjs"))
+    );
+    const task = startPythonRun({
+      code: "def solve(n): return n + 1",
+      questionId: "custom",
+      tests: [{ name: "Test", args: [4], expected: 5 }],
+    });
+    assert.equal(frame.attributes.sandbox, "allow-scripts");
+    assert(
+      frame.srcdoc.includes("connect-src http://localhost:3000/_python/;"),
+    );
+    assert(!frame.srcdoc.includes("def solve"));
+    const bootstrap = frame.srcdoc.match(/<script>([\s\S]*)<\/script>/)[1];
+    const { Script } = await import("node:vm");
+    new Script(bootstrap);
+    const result = await task.result;
+    assert(result.cases[0].passed);
+    assert(frame.removed);
+  } finally {
+    peer?.close();
+    if (oldDocument === undefined) delete globalThis.document;
+    else globalThis.document = oldDocument;
+    if (oldLocation === undefined) delete globalThis.location;
+    else globalThis.location = oldLocation;
   }
 });

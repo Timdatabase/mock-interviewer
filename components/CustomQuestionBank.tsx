@@ -1,4 +1,5 @@
 "use client";
+import { MAX_BANK_CHARACTERS } from "@/lib/interview/limits";
 import { useState } from "react";
 export default function CustomQuestionBank({
   count,
@@ -54,7 +55,7 @@ export default function CustomQuestionBank({
             value={text}
             onChange={(event) => setText(event.target.value)}
             rows={7}
-            maxLength={30000}
+            maxLength={MAX_BANK_CHARACTERS}
             required
             placeholder={
               "Implement a least recently used cache.\n---\nGiven a sorted array, find the first and last index of a target.\n---\nTell me about a time you changed your mind after receiving feedback."
@@ -62,8 +63,9 @@ export default function CustomQuestionBank({
           />
           <div className="bank-footer">
             <span>
-              Up to 30 questions. Uses the interview type selected in setup. New
-              bank replaces the active pool.
+              {text.length.toLocaleString()} / 500,000 characters · up to 30
+              questions, 50,000 characters each. Uses the interview type
+              selected in setup. New bank replaces the active pool.
             </span>
             <button className="primary" type="submit">
               Use my questions & pick one ↗

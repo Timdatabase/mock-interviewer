@@ -1227,3 +1227,517 @@ blockquote {
     font-size: 10px;
   }
 }
+
+/* Keep the live room inside the viewport; long panels scroll independently. */
+.room.shell {
+  height: 100dvh;
+  max-height: 100dvh;
+  overflow: hidden;
+  padding: 14px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.room > .brand {
+  flex-shrink: 0;
+  padding-bottom: 10px;
+  font-size: 15px;
+}
+.room > .room-toolbar {
+  flex-shrink: 0;
+  padding: 0;
+  font-size: 10px;
+}
+.room > .alert,
+.room > .notice {
+  flex-shrink: 0;
+  max-height: 65px;
+  overflow: auto;
+  margin: 0;
+  padding: 9px 13px;
+  font-size: 11px;
+}
+.room > .custom-bank {
+  flex-shrink: 0;
+  padding: 9px 14px;
+  margin: 0;
+}
+.room .custom-bank form {
+  margin-top: 12px;
+  max-height: 30dvh;
+  overflow: auto;
+}
+.room .custom-bank textarea {
+  min-height: 80px;
+  max-height: 15dvh;
+}
+.room > .room-grid {
+  flex: 1;
+  min-height: 0;
+  grid-template-columns: 210px minmax(0, 1fr);
+  gap: 16px;
+}
+.room .room-grid > aside {
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 3px;
+}
+.room .workspace {
+  min-height: 0;
+  grid-template-columns: minmax(235px, 0.7fr) minmax(330px, 1.3fr);
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: 10px 16px;
+  overflow: hidden;
+}
+.room .workspace > .problem {
+  grid-column: 1;
+  grid-row: 1 / 4;
+  position: static;
+  height: 100%;
+  max-height: 100%;
+  overflow: auto;
+  padding: 20px;
+}
+.room .work-tabs {
+  grid-column: 2;
+  grid-row: 1;
+  display: flex;
+  gap: 5px;
+  padding: 4px;
+  border: 1px solid var(--line);
+  background: #edf0e7;
+  border-radius: 9px;
+}
+.work-tabs button {
+  flex: 1;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--muted);
+  padding: 9px 8px;
+  font-size: 11px;
+  white-space: nowrap;
+}
+.work-tabs button[aria-pressed="true"] {
+  background: #fffef9;
+  color: var(--ink);
+  box-shadow: 0 1px 3px #18201e10;
+  font-weight: 700;
+}
+.work-tabs .question-tab {
+  display: none;
+}
+.room .coding-panel,
+.room .notes-panel,
+.room .transcript {
+  grid-column: 2;
+  grid-row: 2;
+  min-height: 0;
+  height: 100%;
+}
+.room .coding-panel {
+  display: flex;
+  flex-direction: column;
+}
+.room .coding-panel .code-titlebar,
+.room .coding-panel .execution-toolbar {
+  flex-shrink: 0;
+}
+.coding-panel > .solution-editor {
+  flex: 1;
+  min-height: 95px;
+  overflow: hidden;
+}
+.solution-editor .cm-editor {
+  height: 100%;
+}
+.solution-editor .cm-scroller {
+  overflow: auto;
+}
+.coding-panel > .editor-loading {
+  flex: 1;
+  height: auto;
+  min-height: 95px;
+}
+.room .coding-panel .output-panel {
+  flex: 0 0 33%;
+  min-height: 125px;
+  max-height: 45%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.room .output-tabs {
+  flex-shrink: 0;
+  padding: 0 12px;
+  gap: 12px;
+}
+.room .output-tabs button {
+  padding: 10px 0;
+}
+.room .test-editor,
+.room .run-output {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  max-height: none;
+  padding: 12px;
+}
+.room .test-editor textarea {
+  margin: 7px 0;
+  min-height: 72px;
+  font-size: 10px;
+}
+.room .notes-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 20px;
+  overflow: auto;
+}
+.room .notes-panel > label {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.room .notes-panel textarea {
+  flex: 1;
+  min-height: 90px;
+  resize: none;
+  line-height: 1.9;
+  margin-bottom: 0;
+}
+.approach-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+.approach-actions > span {
+  color: var(--muted);
+  font-size: 10px;
+}
+.room .workspace > .transcript {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  overflow: hidden;
+}
+.room .transcript .messages {
+  flex: 1;
+  min-height: 0;
+  max-height: none;
+  overflow: auto;
+}
+.room .ask-sam {
+  grid-column: 2;
+  grid-row: 3;
+  padding: 7px;
+}
+.room .ask-sam input {
+  min-width: 0;
+}
+.room.tab-code .workspace > .notes-panel,
+.room.tab-code .workspace > .transcript,
+.room.tab-approach .workspace > .coding-panel,
+.room.tab-approach .workspace > .transcript,
+.room.tab-conversation .workspace > .coding-panel,
+.room.tab-conversation .workspace > .notes-panel,
+.room.tab-question .workspace > .coding-panel,
+.room.tab-question .workspace > .notes-panel,
+.room.tab-question .workspace > .transcript {
+  display: none;
+}
+.room .interviewer-card {
+  padding: 12px;
+}
+.room .avatar-scene {
+  height: clamp(110px, 17dvh, 165px);
+}
+.room .avatar-scene svg {
+  width: 160px;
+  height: 160px;
+}
+.room .interviewer-card h2 {
+  margin-top: 12px;
+}
+.room .interviewer-card .fine {
+  font-size: 10px;
+  margin: 8px 3px;
+}
+.room .interviewer-card .wide {
+  margin-top: 8px;
+  padding: 9px 12px;
+  font-size: 10px;
+}
+.room .interviewer-card .text-button {
+  font-size: 10px;
+  padding-top: 12px;
+}
+.room .awareness-card {
+  margin-top: 12px;
+  padding: 13px;
+}
+.room .session-flow {
+  margin-top: 12px;
+  padding: 14px;
+}
+.room .session-flow button {
+  padding: 8px 0;
+  font-size: 11px;
+}
+.audio-controls {
+  padding-top: 12px;
+}
+.audio-status {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  font-size: 9px;
+  color: var(--muted);
+}
+.audio-meter {
+  height: 4px;
+  background: #dfe7d8;
+  border-radius: 4px;
+  overflow: hidden;
+}
+.audio-meter i {
+  display: block;
+  height: 100%;
+  background: #6b9c59;
+  transition: width 0.15s;
+}
+.audio-controls label {
+  font-size: 9px;
+  margin-top: 12px;
+}
+.audio-controls label span {
+  float: right;
+}
+.audio-controls input[type="range"] {
+  width: 100%;
+  margin: 8px 0 0;
+  padding: 0;
+  accent-color: #56794c;
+}
+.room > footer {
+  flex-shrink: 0;
+  margin: 0;
+  border-top: 0;
+  padding: 0;
+  font-size: 9px;
+}
+@media (max-width: 1050px) {
+  .room.shell {
+    padding: 12px;
+  }
+  .room > .room-grid {
+    grid-template-columns: 175px minmax(0, 1fr);
+    gap: 12px;
+  }
+  .room .workspace {
+    grid-template-columns: minmax(190px, 0.65fr) minmax(280px, 1.35fr);
+    gap: 10px;
+  }
+  .room .problem h2 {
+    font-size: 23px;
+  }
+  .room .workspace > .problem {
+    padding: 16px;
+  }
+  .room .output-help {
+    display: none;
+  }
+  .room .execution-toolbar {
+    padding: 8px;
+  }
+  .room .execution-toolbar > span {
+    display: none;
+  }
+  .room .execution-toolbar > div {
+    width: 100%;
+  }
+  .room .execution-toolbar button {
+    flex: 1;
+  }
+}
+@media (max-width: 850px) {
+  .room.shell {
+    padding: 10px;
+    gap: 8px;
+  }
+  .room > .room-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .room .room-grid > aside {
+    display: block;
+    flex: 0 0 auto;
+    max-height: 155px;
+    overflow: auto;
+    padding: 0;
+  }
+  .room .room-grid > aside > .awareness-card,
+  .room .room-grid > aside > .session-flow {
+    display: none;
+  }
+  .room .interviewer-card {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px 12px;
+  }
+  .room .interviewer-card .avatar-scene,
+  .room .interviewer-card > .fine {
+    display: none;
+  }
+  .room .interviewer-card h2 {
+    margin: 0;
+    align-self: center;
+    font-size: 17px;
+  }
+  .room .interviewer-card h2 span {
+    display: inline;
+    margin-left: 8px;
+  }
+  .room .interviewer-card > .wide {
+    margin: 0;
+  }
+  .room .audio-controls {
+    grid-column: 1 / -1;
+    padding-top: 4px;
+  }
+  .room .audio-controls .audio-status {
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+  }
+  .room .audio-meter {
+    flex: 1;
+  }
+  .room .audio-controls label {
+    display: inline;
+  }
+  .room .audio-controls input[type="range"] {
+    width: 36%;
+    vertical-align: middle;
+    margin: 4px 12px;
+  }
+  .room .audio-controls > .wide {
+    display: inline-flex;
+    width: auto;
+    padding: 6px 10px;
+  }
+  .room .audio-controls > .text-button {
+    display: inline;
+    width: auto;
+    padding: 6px;
+    margin-left: 10px;
+  }
+  .room .workspace {
+    flex: 1;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    min-height: 0;
+  }
+  .room .work-tabs {
+    grid-column: 1;
+  }
+  .work-tabs .question-tab {
+    display: block;
+  }
+  .work-tabs button {
+    font-size: 10px;
+    padding: 8px 4px;
+  }
+  .room .workspace > .problem {
+    grid-column: 1;
+    grid-row: 2;
+    display: none;
+  }
+  .room.tab-question .workspace > .problem,
+  .room.no-question .workspace > .problem {
+    display: block;
+  }
+  .room .workspace > .coding-panel,
+  .room .workspace > .notes-panel,
+  .room .workspace > .transcript {
+    grid-column: 1;
+  }
+  .room .ask-sam {
+    grid-column: 1;
+  }
+  .room .custom-bank .bank-header strong {
+    font-size: 10px;
+  }
+  .room .custom-bank .bank-header .eyebrow {
+    display: none;
+  }
+  .room .custom-bank .bank-header > div:first-child {
+    width: auto;
+  }
+  .room .custom-bank .bank-header > div:last-child {
+    width: auto;
+  }
+  .room .custom-bank .secondary {
+    padding: 6px 8px;
+    font-size: 9px;
+  }
+  .room > footer {
+    display: none;
+  }
+  .room .runtime-label {
+    display: inline;
+  }
+}
+@media (max-height: 650px) and (min-width: 851px) {
+  .room .avatar-scene {
+    height: 95px;
+  }
+  .room .interviewer-card h2 span,
+  .room .interviewer-card > .fine {
+    display: none;
+  }
+  .room .awareness-card,
+  .room .session-flow {
+    margin-top: 9px;
+  }
+  .room .work-tabs button {
+    padding: 7px;
+  }
+  .room .file-tab {
+    padding: 10px 14px;
+  }
+  .room .coding-panel .output-panel {
+    min-height: 110px;
+  }
+  .room > .custom-bank {
+    padding: 6px 12px;
+  }
+}
+.language-select select {
+  width: auto;
+  margin: 5px 8px;
+  padding: 6px 24px 6px 9px;
+  background: #303b42;
+  color: #edf3ed;
+  border: 1px solid #4a585b;
+  font-size: 11px;
+}
+.language-select select:focus-visible {
+  outline: 2px solid #d7eac5;
+}
+
+.room .problem-text {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.room .problem h2 {
+  overflow-wrap: anywhere;
+}

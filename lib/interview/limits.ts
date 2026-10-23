@@ -1,0 +1,3 @@
+export const MAX_QUESTION_CHARACTERS = 50_000;
+export const MAX_BANK_CHARACTERS = 500_000;
+export const MAX_CODE_CHARACTERS = 100_000;

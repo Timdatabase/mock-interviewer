@@ -1,24 +1,39 @@
 "use client";
+import { MAX_CODE_CHARACTERS } from "@/lib/interview/limits";
 import CodeMirror from "@uiw/react-codemirror";
+import { useMemo } from "react";
+import { python } from "@codemirror/lang-python";
+import type { CodeLanguage } from "@/lib/runner/languages";
 import { javascript } from "@codemirror/lang-javascript";
 import { oneDark } from "@codemirror/theme-one-dark";
-const extensions = [javascript()];
+
 export default function CodeEditor({
   code,
+  language,
   onChange,
   onCursor,
 }: {
   code: string;
+  language: CodeLanguage;
   onChange: (value: string) => void;
   onCursor: (line: number) => void;
 }) {
+  const extensions = useMemo(
+    () => [
+      language === "python"
+        ? python()
+        : javascript({ typescript: language === "typescript" }),
+    ],
+    [language],
+  );
   return (
     <CodeMirror
       value={code}
-      height="410px"
+      height="100%"
+      className="solution-editor"
       theme={oneDark}
       extensions={extensions}
-      aria-label="JavaScript solution editor"
+      aria-label={`${language} solution editor`}
       indentWithTab
       basicSetup={{
         lineNumbers: true,
@@ -26,7 +41,7 @@ export default function CodeEditor({
         autocompletion: true,
         bracketMatching: true,
       }}
-      onChange={(value) => onChange(value.slice(0, 24000))}
+      onChange={(value) => onChange(value.slice(0, MAX_CODE_CHARACTERS))}
       onUpdate={(update) => {
         if (update.selectionSet)
           onCursor(

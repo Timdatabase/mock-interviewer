@@ -20,4 +20,10 @@ export interface VoiceProvider {
   end: () => Promise<void>;
   toggleMute: () => void;
   isMuted: boolean;
+  volume: number;
+  setVolume: (volume: number) => void;
+  hasAudio: boolean;
+  enableAudio: () => Promise<void>;
+  inputLevel: number;
+  outputLevel: number;
 }

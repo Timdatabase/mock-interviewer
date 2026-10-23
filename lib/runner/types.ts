@@ -15,6 +15,7 @@ export interface RunResult {
   error?: string;
 }
 export interface RunRequest {
+  language?: import("./languages").CodeLanguage;
   code: string;
   questionId: string;
   tests: TestCase[];

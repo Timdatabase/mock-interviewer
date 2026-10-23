@@ -1,3 +1,4 @@
+import { MAX_CODE_CHARACTERS } from "../interview/limits";
 import type { QuickJSWASMModule, QuickJSHandle } from "quickjs-emscripten-core";
 import type { CaseResult, RunRequest, RunResult } from "./types";
 import { matchesOutput } from "./validate";
@@ -9,12 +10,12 @@ export function execute(
   const start = Date.now();
   const logs: string[] = [];
   const cases: CaseResult[] = [];
-  if (request.code.length > 24000 || request.tests.length > 30)
+  if (request.code.length > MAX_CODE_CHARACTERS || request.tests.length > 30)
     return {
       cases,
       logs,
       durationMs: 0,
-      error: "Use at most 24,000 code characters and 30 tests.",
+      error: "Use at most 100,000 code characters and 30 tests.",
     };
   const runtime = QuickJS.newRuntime();
   runtime.setMemoryLimit(16 * 1024 * 1024);

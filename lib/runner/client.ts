@@ -1,8 +1,21 @@
+import { MAX_CODE_CHARACTERS } from "../interview/limits";
+import { startPythonRun } from "./python-client";
 import type { RunRequest, RunResult } from "./types";
 export function startRun(request: RunRequest): {
   result: Promise<RunResult>;
   stop: () => void;
 } {
+  if (request.code.length > MAX_CODE_CHARACTERS || request.tests.length > 30)
+    return {
+      result: Promise.resolve({
+        cases: [],
+        logs: [],
+        durationMs: 0,
+        error: "Use at most 100,000 code characters and 30 tests.",
+      }),
+      stop() {},
+    };
+  if (request.language === "python") return startPythonRun(request);
   const worker = new Worker(new URL("./runner.worker.ts", import.meta.url));
   let finish: (result: RunResult) => void;
   let timer: ReturnType<typeof setTimeout>;

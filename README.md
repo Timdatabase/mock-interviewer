@@ -10,21 +10,21 @@ cp .env.example .env.local
 npm run dev
 ```
 
-Open http://localhost:3000. Choose an interview type, topics, problem difficulty, target level, and session length. Enter the room and select a random question. Start voice or practice without voice. Write JavaScript in the editor and run the visible tests. Sam follows your workspace automatically while voice is connected; use Discuss with Sam, hint controls, or the message box to request a response. End the session for guided reflection and a downloadable JSON record.
+Open http://localhost:3000 on the computer running the app. Microphone access requires localhost or HTTPS; a plain HTTP network IP will not expose microphone APIs. Choose an interview type, topics, problem difficulty, target level, and session length. Enter the room and select a random question. Start voice or practice without voice. Choose Python, JavaScript, or TypeScript in the editor header. Each language keeps its own draft. Write your solution and run the visible tests. Sam follows your workspace automatically while voice is connected; use Discuss with Sam, hint controls, or the message box to request a response. End the session for guided reflection and a downloadable JSON record.
 
 ## Voice configuration
 
 Set `ELEVENLABS_API_KEY` and `NEXT_PUBLIC_ELEVENLABS_AGENT_ID` in `.env.local`. The server obtains a short-lived signed WebSocket URL; the API key never reaches the browser.
 
-In your ElevenLabs agent's Security settings, enable **system prompt** and **first message** overrides. The app sends the chosen problem, target role, level, duration, and interview behavior as session overrides. Without these permissions, startup can fail. Configure the agent's voice and turn-taking in ElevenLabs. Voice sessions and explicitly shared code/notes are processed by ElevenLabs.
+Give the API key **ElevenAgents → Write** (`convai_write`). In your ElevenLabs agent's Security settings, enable **system prompt** and **first message** overrides. The app sends the chosen problem, target role, level, duration, and interview behavior as session overrides. Without these permissions, startup can fail. Configure the agent's voice and turn-taking in ElevenLabs. Sam opens with an introduction, explains the format, presents the problem, and invites clarifying questions. Voice sessions and explicitly shared code/notes are processed by ElevenLabs.
 
 References: [signed URLs](https://elevenlabs.io/docs/api-reference/conversations/get-signed-url), [session overrides](https://elevenlabs.io/docs/eleven-agents/customization/personalization/overrides).
 
 ## Bring your own questions
 
-In the interview room, open **Bring your own questions**. Paste a single prompt to practice it directly, or paste up to 30 prompts separated by a line containing `---`. Loading a bank picks a question immediately; the next-question button randomly selects from the remaining prompts without repeats. The bank uses the interview type chosen at setup, so keep coding and behavioral prompts in separate sessions.
+In the interview room, open **Bring your own questions**. Paste a single prompt to practice it directly, or paste up to 30 prompts (50,000 characters each, 500,000 per batch) separated by a line containing `---`. Loading a bank picks a question immediately; the next-question button randomly selects from the remaining prompts without repeats. The bank uses the interview type chosen at setup, so keep coding and behavioral prompts in separate sessions.
 
-Custom coding prompts get a `solve(...args)` starter function. In Test cases, provide JSON cases with `name`, `args`, and `expected` fields. For example, a staircase question could use `[{"name":"Four steps","args":[4],"expected":5}]`. Custom prompts and work stay in session memory until you export the session; a refresh loses them.
+Custom coding prompts get a language-appropriate `solve` starter function. In Test cases, provide JSON cases with `name`, `args`, and `expected` fields. For example, a staircase question could use `[{"name":"Four steps","args":[4],"expected":5}]`. Custom prompts and work stay in session memory until you export the session; a refresh loses them.
 
 ## Question bank
 
@@ -39,10 +39,15 @@ Coding questions include JavaScript starter functions and editable visible tests
 ## Session behavior and limits
 
 - Animated SVG interviewer has idle, connecting, listening, and speaking states, with reduced-motion support.
-- CodeMirror editor includes syntax highlighting, line numbers, bracket matching, autocomplete, and a separate tests/output panel.
-- JavaScript runs locally in a QuickJS WebAssembly sandbox inside a dedicated worker. Each run gets a fresh runtime with a 2-second execution limit, 16 MB guest heap, bounded stack, captured console output, and a Stop control. The guest has no browser, network, filesystem, or server APIs. The outer worker timeout also covers startup failures. Synchronous functions only; other languages and imports are not supported.
+- The desktop room stays within the viewport, with independent panel scrolling and Code & tests, My approach, and Conversation tabs. Small screens also have a Question tab.
+- Write your reasoning in My approach and use Send approach. The actual note text is sent as a candidate message and appears in Conversation. If disconnected, the action offers to connect Sam first.
+- CodeMirror editor includes Python/JavaScript/TypeScript selection, syntax highlighting, line numbers, bracket matching, autocomplete, and a separate tests/output panel.
+- JavaScript runs locally in a QuickJS WebAssembly sandbox inside a dedicated worker. Each run gets a fresh runtime with a 2-second execution limit, 16 MB guest heap, bounded stack, captured console output, and a Stop control. The guest has no browser, network, filesystem, or server APIs. The outer worker timeout also covers startup failures. Synchronous functions only. TypeScript is transpiled before running in the same sandbox; this removes types but does not perform type checking. Source code allows up to 100,000 characters.
+- Python uses a local Pyodide runtime in a worker owned by a sandboxed, opaque-origin frame. CSP restricts requests to public runtime assets, preventing access to app API endpoints. Initialization has a separate 45-second timeout; computation has a 2.5-second hard timeout and Stop control. The Python runtime has a larger browser memory footprint than QuickJS and no equivalent 16 MB guest heap cap. External packages are not installed automatically.
+- `npm run dev` and `npm run build` prepare Python assets from the installed package; restart the dev server after updating dependencies. The first Python run loads the runtime; browser caching speeds up subsequent loads.
 - Results show actual versus expected output and distinguish stale runs after edits. Pair-sum and dependency-order cases accept alternative valid answers. Visible tests provide evidence, not complete grading.
 - With voice connected, automatic workspace updates send current code, notes, cursor line, phase, and test results after an editing pause and at spoken turns. The toggle stops automatic sharing; explicit discussion actions still share the workspace. Context updates inform future responses without interrupting typing. Explicit messages use the SDK's user-message method to request an interviewer turn.
+- Speaker volume, output activity, Enable speaker, and Repeat introduction controls help diagnose playback. Startup awaits the underlying voice client's connection promise so handshake errors are visible.
 - Behavioral and system design sessions use a notes workspace and distinct interview guidance.
 - Phase controls guide clarification, approach, work, and reflection. The timer is advisory and does not abruptly disconnect voice.
 - Review includes saved work, candidate transcript excerpts, type-specific self-review prompts, and export. It is guided self-assessment, not automated grading.
@@ -69,6 +74,7 @@ Coding questions include JavaScript starter functions and editable visible tests
 ```bash
 npm run lint
 npm run test:runner
+npm run test:voice
 npx tsc --noEmit
 npm run build
 ```
