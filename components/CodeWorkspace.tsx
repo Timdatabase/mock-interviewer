@@ -26,6 +26,7 @@ export default function CodeWorkspace({
   onRun,
   onAsk,
   voiceConnected,
+  compactTests = false,
 }: {
   question: PublicQuestion;
   language: CodeLanguage;
@@ -36,7 +37,9 @@ export default function CodeWorkspace({
   onRun: (run: RunRecord) => void;
   onAsk: (message: string) => void;
   voiceConnected: boolean;
+  compactTests?: boolean;
 }) {
+  const [consoleOpen, setConsoleOpen] = useState(!compactTests);
   const [tab, setTab] = useState<"tests" | "output">("tests");
   const [tests, setTests] = useState(
     JSON.stringify(question.testCases, null, 2),
@@ -56,6 +59,7 @@ export default function CodeWorkspace({
   async function executeCode() {
     if (active.current) return;
     setError("");
+    setConsoleOpen(true);
     try {
       const parsed = parseTests(tests);
       setRunning(true);
@@ -83,7 +87,9 @@ export default function CodeWorkspace({
   }
   const passed = run?.result.cases.filter((test) => test.passed).length ?? 0;
   return (
-    <section className="coding-panel">
+    <section
+      className={`coding-panel ${consoleOpen ? "" : "console-collapsed"}`}
+    >
       <div className="code-titlebar">
         <div className="file-tab">
           <span>
@@ -154,13 +160,19 @@ export default function CodeWorkspace({
         <div className="output-tabs">
           <button
             aria-pressed={tab === "tests"}
-            onClick={() => setTab("tests")}
+            onClick={() => {
+              setTab("tests");
+              setConsoleOpen(true);
+            }}
           >
             Test cases <span>{question.testCases.length || "Custom"}</span>
           </button>
           <button
             aria-pressed={tab === "output"}
-            onClick={() => setTab("output")}
+            onClick={() => {
+              setTab("output");
+              setConsoleOpen(true);
+            }}
           >
             Output{" "}
             {run && (
@@ -174,6 +186,19 @@ export default function CodeWorkspace({
                 {passed}/{run.result.cases.length}
               </span>
             )}
+          </button>
+          <button
+            type="button"
+            className="console-toggle"
+            aria-label={
+              consoleOpen
+                ? "Collapse tests and output"
+                : "Expand tests and output"
+            }
+            aria-expanded={consoleOpen}
+            onClick={() => setConsoleOpen(!consoleOpen)}
+          >
+            {consoleOpen ? "⌄ Hide" : "⌃ Show"}
           </button>
           <span className="output-help">
             Visible tests only · not a complete correctness proof

@@ -8,7 +8,11 @@ import {
   type AssistantEvent,
 } from "@/lib/assistant/schema";
 import { assistantEventId, createAssistantEvent } from "@/lib/assistant/events";
-import { canApplyProposal, partnerHistory } from "@/lib/assistant/proposals";
+import {
+  canApplyProposal,
+  partnerHistory,
+  proposalWriteAction,
+} from "@/lib/assistant/proposals";
 interface Message {
   id: string;
   role: "user" | "assistant";
@@ -49,12 +53,18 @@ export default function CodingPartner({
   language: CodeLanguage;
   notes: string;
   latestRun: string;
-  onApply: (code: string) => void;
+  onApply: (code: string, baseCode: string, language: CodeLanguage) => boolean;
   onEvent: (event: AssistantEvent) => void;
 }) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [prompt, setPrompt] = useState("");
   const [pending, setPending] = useState(false);
+  const [directWrite, setDirectWrite] = useState(true);
+  const [writeStatus, setWriteStatus] = useState("");
+  const currentWorkspace = useRef({ code, language, directWrite, onApply });
+  useEffect(() => {
+    currentWorkspace.current = { code, language, directWrite, onApply };
+  });
   const [error, setError] = useState("");
   const [configured, setConfigured] = useState<boolean>();
   const [model, setModel] = useState("");
@@ -126,6 +136,7 @@ export default function CodingPartner({
     request.current = controller;
     setPending(true);
     setError("");
+    setWriteStatus("");
     const baseCode = code;
     const id = assistantEventId();
     const user: Message = {
@@ -183,6 +194,40 @@ export default function CodingPartner({
         },
       ]);
       record("reply", reply.message, reply.proposedCode ?? undefined);
+      if (reply.proposedCode !== null) {
+        const latest = currentWorkspace.current;
+        const proposal = { baseCode, code: reply.proposedCode, language };
+        const action = proposalWriteAction(
+          proposal,
+          latest.code,
+          latest.language,
+          latest.directWrite,
+        );
+        if (action === "write") {
+          if (
+            !latest.onApply(proposal.code, proposal.baseCode, proposal.language)
+          ) {
+            setWriteStatus(
+              "Your editor changed before the write. Your edits were preserved.",
+            );
+            return;
+          }
+          setUndo({ before: latest.code, after: proposal.code, language });
+          record(
+            "applied",
+            "AI wrote the requested change directly into the editor. Candidate review and testing are still required.",
+            proposal.code,
+          );
+          setWriteStatus(
+            "Patch updated the editor. Inspect the change and run tests.",
+          );
+        } else if (action === "stale")
+          setWriteStatus(
+            "Your editor or language changed during generation. The suggestion is held below; your edits were preserved.",
+          );
+        else if (action === "review")
+          setWriteStatus("Suggestion ready for review. Direct write is off.");
+      }
     } catch (failure) {
       if (mounted.current)
         setError(
@@ -209,13 +254,12 @@ export default function CodingPartner({
       );
       return;
     }
+    if (!onApply(proposal.code, proposal.baseCode, proposal.language)) {
+      setError("Your editor changed. Request a fresh suggestion.");
+      return;
+    }
     setUndo({ before: code, after: proposal.code, language });
-    onApply(proposal.code);
-    record(
-      "applied",
-      "Reviewed and applied a coding partner proposal.",
-      proposal.code,
-    );
+    record("applied", "Applied a coding partner proposal.", proposal.code);
   }
   return (
     <section className="assistant-panel card">
@@ -237,6 +281,19 @@ export default function CodingPartner({
               : "Full assistance"}
         </span>
       </header>
+      <label className="partner-direct-write">
+        <input
+          type="checkbox"
+          checked={directWrite}
+          onChange={(event) => setDirectWrite(event.target.checked)}
+        />
+        <span>
+          Write directly to editor
+          <small>
+            Requested changes appear in your solution. Undo is available.
+          </small>
+        </span>
+      </label>
       <p className="partner-roles">
         Sam leads the interview. Patch helps you plan, write, and debug. You
         review and test the result.
@@ -301,10 +358,9 @@ export default function CodingPartner({
                   </div>
                 )}
                 {message.reply.proposedCode !== null && (
-                  <details className="partner-proposal" open>
+                  <details className="partner-proposal">
                     <summary>
-                      Review proposed replacement{" "}
-                      <span>{message.language}</span>
+                      View code change <span>{message.language}</span>
                     </summary>
                     <div className="proposal-columns">
                       <div>
@@ -367,6 +423,11 @@ export default function CodingPartner({
           </p>
         )}
       </div>
+      {writeStatus && (
+        <p className="partner-write-status" role="status">
+          {writeStatus}
+        </p>
+      )}
       {error && (
         <p className="alert" role="alert">
           {error}
@@ -382,7 +443,7 @@ export default function CodingPartner({
             }
             onClick={() => {
               if (code === undo.after && language === undo.language) {
-                onApply(undo.before);
+                if (!onApply(undo.before, undo.after, undo.language)) return;
                 record(
                   "undone",
                   "Undid the applied coding partner proposal.",
@@ -435,9 +496,8 @@ export default function CodingPartner({
         </div>
       </form>
       <p className="partner-disclosure">
-        Requests go to OpenAI. Suggestions can be wrong; they are applied only
-        when you choose. No terminal or automatic code execution is available to
-        the partner.
+        Requests go to OpenAI. Direct write updates your editor after a request;
+        it never runs code automatically. Review and test the result.
       </p>
     </section>
   );

@@ -17,6 +17,7 @@ const files = [
   ["lib/assistant/service.ts", "service"],
   ["lib/assistant/proposals.ts", "proposals"],
   ["lib/interview/config.ts", "config"],
+  ["lib/interview/ide-layout.ts", "ide-layout"],
   ["lib/schemas/question.ts", "question-schema"],
   ["lib/runner/engine.ts", "engine"],
   ["lib/runner/validate.ts", "validate"],
@@ -42,7 +43,7 @@ for (const [file, name] of files) {
 const { handleAssistant } = await import(
   pathToFileURL(join(directory, "service.mjs"))
 );
-const { canApplyProposal, partnerHistory } = await import(
+const { canApplyProposal, partnerHistory, proposalWriteAction } = await import(
   pathToFileURL(join(directory, "proposals.mjs"))
 );
 const { configSchema, isCodingInterview } = await import(
@@ -344,4 +345,35 @@ test("Python and TypeScript use the same practical task contracts", async () => 
       tests: retry.testCases,
     }).cases.every((test) => test.passed),
   );
+});
+
+test("direct editor writes are opt-out, respect fresh code and language, and avoid redundant updates", () => {
+  const proposal = { baseCode: "old", code: "new", language: "python" };
+  assert.equal(proposalWriteAction(proposal, "old", "python", true), "write");
+  assert.equal(proposalWriteAction(proposal, "old", "python", false), "review");
+  assert.equal(
+    proposalWriteAction(proposal, "my newer work", "python", true),
+    "stale",
+  );
+  assert.equal(
+    proposalWriteAction(proposal, "old", "typescript", true),
+    "stale",
+  );
+  assert.equal(
+    proposalWriteAction(proposal, "new", "python", true),
+    "unchanged",
+  );
+  const undo = { baseCode: "new", code: "old", language: "python" };
+  assert(canApplyProposal(undo, "new", "python"));
+  assert(!canApplyProposal(undo, "my manual edit", "python"));
+});
+
+test("IDE resizing preserves the majority of desktop space for code", async () => {
+  const { clampPartnerWidth } = await import(
+    pathToFileURL(join(directory, "ide-layout.mjs"))
+  );
+  assert.equal(clampPartnerWidth(100, 1200), 260);
+  assert.equal(clampPartnerWidth(700, 1400), 520);
+  assert.equal(clampPartnerWidth(500, 900), 378);
+  assert.equal(clampPartnerWidth(400, 700), 294);
 });

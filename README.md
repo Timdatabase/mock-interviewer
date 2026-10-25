@@ -26,7 +26,8 @@ Select **AI-assisted** during setup. This round uses five original, single-file 
 
 - **Sam / interviewer:** voice conversation about clarification, delegation, review, verification, and ownership of the final code.
 - **Patch / coding partner:** a separate OpenAI text assistant in the AI partner tab. It can plan, implement, debug, or review, including proposing a complete solution.
-- Review the proposed replacement before applying it. A suggestion cannot overwrite code edited since its request, or a different programming language. Undo is available while the applied code remains unchanged. Run tests yourself after applying code.
+- The editor and coding partner stay side by side in a single IDE view. Drag the divider (or use its arrow keys) to resize the partner panel. The task collapses into a header, Sam uses compact controls, and test output starts collapsed until you run code.
+- Direct write is on by default: when you request an implementation or fix, the partner’s proposed code is written into the editor as soon as it returns. Turn off **Write directly to editor** to review before applying. A suggestion cannot overwrite code edited since its request, another task, or another programming language. Undo is available while the applied code remains unchanged. Code never runs automatically.
 - AI prompts, replies, applied changes, and undos are recorded in the session review/export. Sam receives concise observations when connected. These are evidence for discussion, not an automated hiring score.
 
 Set these **server-only** variables in `.env.local`, then restart the dev server:
@@ -38,7 +39,7 @@ OPENAI_ASSISTANT_MODEL=gpt-6-astra
 
 The model can be changed using `OPENAI_ASSISTANT_MODEL`. No OpenAI key reaches the browser. The first version uses the Responses API with structured output and `store: false`. Only requests you initiate go to OpenAI, containing the task, current code, notes, visible test summary, and bounded conversation history. The key is not part of that context. Missing credentials, unavailable models, quota/rate limits, refusals, timeouts, and invalid replies have explicit error states.
 
-The partner has no terminal, filesystem, browser, external tools, or automatic execution. It proposes a replacement for the single-file solution; the existing local runner remains the source of actual test results. Each request caps output at 5,000 tokens and times out after 60 seconds. Session state remains in browser memory until exported.
+The partner has no terminal, filesystem, browser, external tools, or automatic execution. It generates a replacement for the single-file solution; the existing local runner remains the source of actual test results. Each request caps output at 5,000 tokens and times out after 60 seconds. Session state remains in browser memory until exported.
 
 This practice format draws on [Canva's description of AI-assisted interviews](https://www.canva.dev/blog/engineering/yes-you-can-use-ai-in-our-interviews/), which emphasizes realistic work, critical review, and verification, and [CodeSignal's full co-pilot mode](https://codesignal.com/blog/introducing-ai-assisted-coding-assessments-interviews/). Tasks are original practice exercises, not copied employer questions. The integration follows the official [OpenAI code-generation](https://developers.openai.com/api/docs/guides/code-generation) and [structured-output](https://developers.openai.com/api/docs/guides/structured-outputs) guidance.
 
@@ -83,7 +84,7 @@ Coding questions include JavaScript starter functions and editable visible tests
 - `components/Avatar.tsx`: code-native animated interviewer.
 - `components/CodeWorkspace.tsx` and `CodeEditor.tsx`: editor, custom tests, local execution, and output.
 - `components/CustomQuestionBank.tsx`: single or batch prompt entry.
-- `components/CodingPartner.tsx`: AI chat, reviewable code proposals, and guarded application/undo.
+- `components/CodingPartner.tsx`: embedded AI chat, direct editor writing, and guarded review/undo.
 - `lib/assistant/` and `app/api/assistant/route.ts`: validated, server-only OpenAI integration.
 - `lib/runner/`: isolated QuickJS execution, worker lifecycle, and output validation.
 - `lib/interview/use-awareness.ts`: debounced and speech-triggered workspace observations.
