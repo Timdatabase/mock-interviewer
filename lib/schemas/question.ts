@@ -11,7 +11,12 @@ export const interviewQuestionSchema = z.object({
   id: z.string().min(1),
   company: z.string().min(1),
   role: z.string().min(1),
-  interviewType: z.enum(["technical", "behavioral", "system-design"]),
+  interviewType: z.enum([
+    "technical",
+    "ai-assisted",
+    "behavioral",
+    "system-design",
+  ]),
   round: z.string().min(1),
   question: z.string().min(1),
   topics: z.array(z.string()),
@@ -25,6 +30,14 @@ export const interviewQuestionSchema = z.object({
   constraints: z.array(z.string()).default([]),
   sourceUrl: z.string().url().optional(),
   starterCode: z.string().default(""),
+  starterCodes: z
+    .object({
+      javascript: z.string().optional(),
+      typescript: z.string().optional(),
+      python: z.string().optional(),
+    })
+    .default({}),
+  taskKind: z.enum(["implement", "debug", "refactor"]).default("implement"),
   testCases: z
     .array(
       z.object({

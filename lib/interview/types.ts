@@ -3,7 +3,8 @@ import type { interviewQuestionSchema } from "@/lib/schemas/question";
 
 export type InterviewQuestion = z.infer<typeof interviewQuestionSchema>;
 export type InterviewMode = "question-bank" | "research" | "hybrid";
-export type InterviewType = "technical" | "behavioral" | "system-design";
+export type InterviewType =
+  "technical" | "ai-assisted" | "behavioral" | "system-design";
 export type Difficulty = "junior" | "mid" | "senior";
 
 export interface InterviewConfig {

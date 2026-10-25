@@ -10,7 +10,8 @@
     "test:runner": "node scripts/test-runner.mjs",
     "test:voice": "node scripts/test-voice.mjs",
     "predev": "node scripts/prepare-python.mjs",
-    "prebuild": "node scripts/prepare-python.mjs"
+    "prebuild": "node scripts/prepare-python.mjs",
+    "test:assistant": "node scripts/test-assistant.mjs"
   },
   "dependencies": {
     "@browserbasehq/sdk": "^2.20.0",

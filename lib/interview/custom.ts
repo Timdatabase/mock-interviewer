@@ -27,5 +27,7 @@ export function parseCustomQuestions(
     starterCode:
       "function solve(...args) {\n  // Implement the function for your question.\n  \n}\n",
     testCases: [],
+    starterCodes: {},
+    taskKind: "implement" as const,
   }));
 }

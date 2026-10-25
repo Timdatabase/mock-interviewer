@@ -6,8 +6,13 @@ export const languages = [
 ] as const;
 export function starterFor(
   language: CodeLanguage,
-  question: { starterCode: string },
+  question: {
+    starterCode: string;
+    starterCodes?: Partial<Record<CodeLanguage, string>>;
+  },
 ) {
+  const provided = question.starterCodes?.[language];
+  if (provided) return provided;
   const params =
     question.starterCode.match(/function solve\(([^)]*)\)/)?.[1] || "...args";
   if (language === "python")

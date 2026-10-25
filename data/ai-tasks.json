@@ -1,0 +1,604 @@
+[
+  {
+    "id": "ai-pagination",
+    "title": "Repair an API pagination helper",
+    "company": "Generic",
+    "role": "Software Engineer",
+    "interviewType": "ai-assisted",
+    "round": "AI collaboration",
+    "question": "A product API uses the pagination helper below, but customers report missing and overlapping results. Repair it.\n\nContract: solve(items, page, pageSize) returns {items, page, totalPages, hasNext, hasPrevious}. Pages are 1-based. Invalid or non-positive integer page values default to 1; invalid pageSize defaults to 10. A page beyond the final page returns an empty items list and preserves the requested page number. Empty input has zero totalPages. hasPrevious is true only when page > 1 and totalPages > 0.\n\nDiscuss the bug with your AI partner, make a focused change, and add a test that would have caught the original issue.",
+    "topics": [
+      "debugging",
+      "api-design",
+      "testing"
+    ],
+    "tags": [
+      "debugging",
+      "api-design",
+      "testing"
+    ],
+    "difficulty": "mid",
+    "problemDifficulty": "medium",
+    "sourceType": "ai_generated",
+    "sourceNotes": "Original product-style practice task inspired by publicly described AI-assisted interview formats; not an employer question.",
+    "dateAdded": "2026-10-24",
+    "examples": [],
+    "constraints": [
+      "Implement solve(items, page, pageSize). All inputs and outputs are JSON-compatible.",
+      "Use the coding partner as much as you want. Review changes, run tests, and explain your decisions."
+    ],
+    "taskKind": "debug",
+    "starterCode": "function solve(items, page, pageSize) {\n  const start = page * pageSize;\n  return { items: items.slice(start, start + pageSize), page, totalPages: Math.floor(items.length / pageSize), hasNext: start < items.length, hasPrevious: page > 0 };\n}\n",
+    "starterCodes": {
+      "javascript": "function solve(items, page, pageSize) {\n  const start = page * pageSize;\n  return { items: items.slice(start, start + pageSize), page, totalPages: Math.floor(items.length / pageSize), hasNext: start < items.length, hasPrevious: page > 0 };\n}\n",
+      "typescript": "function solve(items: any, page: any, pageSize: any): any {\n  const start = page * pageSize;\n  return { items: items.slice(start, start + pageSize), page, totalPages: Math.floor(items.length / pageSize), hasNext: start < items.length, hasPrevious: page > 0 };\n}\n",
+      "python": "def solve(items, page, pageSize):\n    start = page * pageSize\n    return {\"items\": items[start:start + pageSize], \"page\": page, \"totalPages\": len(items) // pageSize, \"hasNext\": start < len(items), \"hasPrevious\": page > 0}\n"
+    },
+    "testCases": [
+      {
+        "name": "First page",
+        "args": [
+          [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          1,
+          2
+        ],
+        "expected": {
+          "items": [
+            1,
+            2
+          ],
+          "page": 1,
+          "totalPages": 3,
+          "hasNext": true,
+          "hasPrevious": false
+        }
+      },
+      {
+        "name": "Partial last page",
+        "args": [
+          [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          3,
+          2
+        ],
+        "expected": {
+          "items": [
+            5
+          ],
+          "page": 3,
+          "totalPages": 3,
+          "hasNext": false,
+          "hasPrevious": true
+        }
+      },
+      {
+        "name": "Empty input",
+        "args": [
+          [],
+          1,
+          10
+        ],
+        "expected": {
+          "items": [],
+          "page": 1,
+          "totalPages": 0,
+          "hasNext": false,
+          "hasPrevious": false
+        }
+      },
+      {
+        "name": "Invalid parameters",
+        "args": [
+          [
+            1,
+            2
+          ],
+          0,
+          0
+        ],
+        "expected": {
+          "items": [
+            1,
+            2
+          ],
+          "page": 1,
+          "totalPages": 1,
+          "hasNext": false,
+          "hasPrevious": false
+        }
+      },
+      {
+        "name": "Beyond end",
+        "args": [
+          [
+            1,
+            2
+          ],
+          8,
+          2
+        ],
+        "expected": {
+          "items": [],
+          "page": 8,
+          "totalPages": 1,
+          "hasNext": false,
+          "hasPrevious": true
+        }
+      }
+    ]
+  },
+  {
+    "id": "ai-webhooks",
+    "title": "Process duplicate webhook deliveries",
+    "company": "Generic",
+    "role": "Software Engineer",
+    "interviewType": "ai-assisted",
+    "round": "AI collaboration",
+    "question": "Build an in-memory batch processor for payment events that may be retried. solve(events) returns {appliedIds, totals}.\n\nEach valid event has a non-empty string id, a non-empty string account, and an integer amountCents (negative values are allowed). Skip malformed events, including null and non-object values. Boolean amounts are invalid. For duplicate IDs, apply only the first valid event; an invalid occurrence must not reserve its ID. Keep appliedIds in input order. totals maps each affected account to the sum of its applied amounts; keep zero totals.\n\nUse your AI partner to design and implement the behavior. Explain which delivery guarantees this batch helper does and does not provide.",
+    "topics": [
+      "api-design",
+      "data-processing",
+      "testing"
+    ],
+    "tags": [
+      "api-design",
+      "data-processing",
+      "testing"
+    ],
+    "difficulty": "mid",
+    "problemDifficulty": "hard",
+    "sourceType": "ai_generated",
+    "sourceNotes": "Original product-style practice task inspired by publicly described AI-assisted interview formats; not an employer question.",
+    "dateAdded": "2026-10-24",
+    "examples": [],
+    "constraints": [
+      "Implement solve(events). All inputs and outputs are JSON-compatible.",
+      "Use the coding partner as much as you want. Review changes, run tests, and explain your decisions."
+    ],
+    "taskKind": "implement",
+    "starterCode": "function solve(events) {\n  // Implement duplicate-safe batch processing.\n  return { appliedIds: [], totals: {} };\n}\n",
+    "starterCodes": {
+      "javascript": "function solve(events) {\n  // Implement duplicate-safe batch processing.\n  return { appliedIds: [], totals: {} };\n}\n",
+      "typescript": "function solve(events: any): any {\n  // Implement duplicate-safe batch processing.\n  return { appliedIds: [], totals: {} };\n}\n",
+      "python": "def solve(events):\n    # Implement duplicate-safe batch processing.\n    return {\"appliedIds\": [], \"totals\": {}}\n"
+    },
+    "testCases": [
+      {
+        "name": "Duplicate delivery",
+        "args": [
+          [
+            {
+              "id": "a",
+              "account": "team",
+              "amountCents": 100
+            },
+            {
+              "id": "a",
+              "account": "team",
+              "amountCents": 100
+            },
+            {
+              "id": "b",
+              "account": "team",
+              "amountCents": -25
+            }
+          ]
+        ],
+        "expected": {
+          "appliedIds": [
+            "a",
+            "b"
+          ],
+          "totals": {
+            "team": 75
+          }
+        }
+      },
+      {
+        "name": "Invalid does not reserve ID",
+        "args": [
+          [
+            {
+              "id": "a",
+              "account": "team",
+              "amountCents": "bad"
+            },
+            {
+              "id": "a",
+              "account": "team",
+              "amountCents": 30
+            },
+            null
+          ]
+        ],
+        "expected": {
+          "appliedIds": [
+            "a"
+          ],
+          "totals": {
+            "team": 30
+          }
+        }
+      },
+      {
+        "name": "Multiple accounts",
+        "args": [
+          [
+            {
+              "id": "x",
+              "account": "B",
+              "amountCents": 0
+            },
+            {
+              "id": "y",
+              "account": "A",
+              "amountCents": 40
+            }
+          ]
+        ],
+        "expected": {
+          "appliedIds": [
+            "x",
+            "y"
+          ],
+          "totals": {
+            "A": 40,
+            "B": 0
+          }
+        }
+      },
+      {
+        "name": "Boolean is not an amount",
+        "args": [
+          [
+            {
+              "id": "bad",
+              "account": "A",
+              "amountCents": true
+            }
+          ]
+        ],
+        "expected": {
+          "appliedIds": [],
+          "totals": {}
+        }
+      },
+      {
+        "name": "Empty input",
+        "args": [
+          []
+        ],
+        "expected": {
+          "appliedIds": [],
+          "totals": {}
+        }
+      }
+    ]
+  },
+  {
+    "id": "ai-config",
+    "title": "Refactor layered application settings",
+    "company": "Generic",
+    "role": "Software Engineer",
+    "interviewType": "ai-assisted",
+    "round": "AI collaboration",
+    "question": "Our shallow merge helper loses nested defaults. Refactor solve(defaults, overrides) into a predictable deep merge.\n\nBoth top-level inputs are JSON objects. Merge nested objects recursively. An override replaces a scalar, null, or array in full; arrays are never merged by index. Keep default properties that the override does not mention. Empty overrides preserve defaults. Do not mutate either input. You may assume no cycles and no special prototype keys.\n\nAsk the AI partner to propose a design or implementation, inspect it for unwanted behavior, and explain how you would verify the non-mutation requirement beyond the visible tests.",
+    "topics": [
+      "refactoring",
+      "testing"
+    ],
+    "tags": [
+      "refactoring",
+      "testing"
+    ],
+    "difficulty": "mid",
+    "problemDifficulty": "medium",
+    "sourceType": "ai_generated",
+    "sourceNotes": "Original product-style practice task inspired by publicly described AI-assisted interview formats; not an employer question.",
+    "dateAdded": "2026-10-24",
+    "examples": [],
+    "constraints": [
+      "Implement solve(defaults, overrides). All inputs and outputs are JSON-compatible.",
+      "Use the coding partner as much as you want. Review changes, run tests, and explain your decisions."
+    ],
+    "taskKind": "refactor",
+    "starterCode": "function solve(defaults, overrides) {\n  return { ...defaults, ...overrides };\n}\n",
+    "starterCodes": {
+      "javascript": "function solve(defaults, overrides) {\n  return { ...defaults, ...overrides };\n}\n",
+      "typescript": "function solve(defaults: any, overrides: any): any {\n  return { ...defaults, ...overrides };\n}\n",
+      "python": "def solve(defaults, overrides):\n    return {**defaults, **overrides}\n"
+    },
+    "testCases": [
+      {
+        "name": "Nested defaults",
+        "args": [
+          {
+            "api": {
+              "timeout": 1000,
+              "retries": 3
+            },
+            "theme": "light"
+          },
+          {
+            "api": {
+              "timeout": 2000
+            }
+          }
+        ],
+        "expected": {
+          "api": {
+            "timeout": 2000,
+            "retries": 3
+          },
+          "theme": "light"
+        }
+      },
+      {
+        "name": "Arrays replace",
+        "args": [
+          {
+            "tags": [
+              "a",
+              "b"
+            ]
+          },
+          {
+            "tags": [
+              "c"
+            ]
+          }
+        ],
+        "expected": {
+          "tags": [
+            "c"
+          ]
+        }
+      },
+      {
+        "name": "Null replaces",
+        "args": [
+          {
+            "cache": {
+              "enabled": true
+            }
+          },
+          {
+            "cache": null
+          }
+        ],
+        "expected": {
+          "cache": null
+        }
+      },
+      {
+        "name": "Empty override",
+        "args": [
+          {
+            "a": {
+              "b": 2
+            }
+          },
+          {}
+        ],
+        "expected": {
+          "a": {
+            "b": 2
+          }
+        }
+      },
+      {
+        "name": "Object replaces scalar",
+        "args": [
+          {
+            "a": 1
+          },
+          {
+            "a": {
+              "b": 2
+            }
+          }
+        ],
+        "expected": {
+          "a": {
+            "b": 2
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "ai-logs",
+    "title": "Make a log summary resilient",
+    "company": "Generic",
+    "role": "Software Engineer",
+    "interviewType": "ai-assisted",
+    "round": "AI collaboration",
+    "question": "Fix the log summarizer so a malformed line does not break a whole dashboard. solve(lines) returns a list of {service, requests, errors, averageLatencyMs}, sorted by service name (ASCII ascending).\n\nEach input line is a JSON string. A usable record is an object with a non-empty string service, a level in info/warn/error, and a finite, non-negative numeric latencyMs. Booleans are not valid latency values. Skip invalid JSON and invalid records. Count all usable records as requests and only error records as errors. Average latency uses all usable records for that service, rounded to the nearest integer using floor(mean + 0.5). Empty input returns [].\n\nUse the partner to identify assumptions and repair the code, then explain the failures your tests cover.",
+    "topics": [
+      "debugging",
+      "data-processing",
+      "testing"
+    ],
+    "tags": [
+      "debugging",
+      "data-processing",
+      "testing"
+    ],
+    "difficulty": "mid",
+    "problemDifficulty": "medium",
+    "sourceType": "ai_generated",
+    "sourceNotes": "Original product-style practice task inspired by publicly described AI-assisted interview formats; not an employer question.",
+    "dateAdded": "2026-10-24",
+    "examples": [],
+    "constraints": [
+      "Implement solve(lines). All inputs and outputs are JSON-compatible.",
+      "Use the coding partner as much as you want. Review changes, run tests, and explain your decisions."
+    ],
+    "taskKind": "debug",
+    "starterCode": "function solve(lines) {\n  const records = lines.map(line => JSON.parse(line));\n  return records.map(r => ({service: r.service, requests: 1, errors: 0, averageLatencyMs: r.latencyMs}));\n}\n",
+    "starterCodes": {
+      "javascript": "function solve(lines) {\n  const records = lines.map(line => JSON.parse(line));\n  return records.map(r => ({service: r.service, requests: 1, errors: 0, averageLatencyMs: r.latencyMs}));\n}\n",
+      "typescript": "function solve(lines: any): any {\n  const records = lines.map(line => JSON.parse(line));\n  return records.map(r => ({service: r.service, requests: 1, errors: 0, averageLatencyMs: r.latencyMs}));\n}\n",
+      "python": "import json\n\ndef solve(lines):\n    records = [json.loads(line) for line in lines]\n    return [{\"service\": r[\"service\"], \"requests\": 1, \"errors\": 0, \"averageLatencyMs\": r[\"latencyMs\"]} for r in records]\n"
+    },
+    "testCases": [
+      {
+        "name": "Aggregate and skip bad JSON",
+        "args": [
+          [
+            "{\"service\": \"api\", \"level\": \"info\", \"latencyMs\": 10}",
+            "{broken",
+            "{\"service\": \"api\", \"level\": \"error\", \"latencyMs\": 21}"
+          ]
+        ],
+        "expected": [
+          {
+            "service": "api",
+            "requests": 2,
+            "errors": 1,
+            "averageLatencyMs": 16
+          }
+        ]
+      },
+      {
+        "name": "Sorted services",
+        "args": [
+          [
+            "{\"service\": \"z\", \"level\": \"warn\", \"latencyMs\": 5}",
+            "{\"service\": \"a\", \"level\": \"info\", \"latencyMs\": 0}"
+          ]
+        ],
+        "expected": [
+          {
+            "service": "a",
+            "requests": 1,
+            "errors": 0,
+            "averageLatencyMs": 0
+          },
+          {
+            "service": "z",
+            "requests": 1,
+            "errors": 0,
+            "averageLatencyMs": 5
+          }
+        ]
+      },
+      {
+        "name": "Skip invalid records",
+        "args": [
+          [
+            "null",
+            "[]",
+            "{\"service\": \"api\", \"level\": \"info\", \"latencyMs\": true}",
+            "{\"service\": \"api\", \"level\": \"trace\", \"latencyMs\": 1}"
+          ]
+        ],
+        "expected": []
+      },
+      {
+        "name": "Empty input",
+        "args": [
+          []
+        ],
+        "expected": []
+      }
+    ]
+  },
+  {
+    "id": "ai-retries",
+    "title": "Add a capped retry schedule",
+    "company": "Generic",
+    "role": "Software Engineer",
+    "interviewType": "ai-assisted",
+    "round": "AI collaboration",
+    "question": "Implement a deterministic retry helper for a background worker. solve(attempts, baseDelayMs, maxDelayMs) returns the delay for each retry, with attempt zero using baseDelayMs. Each later delay doubles, capped at maxDelayMs. If baseDelayMs exceeds the cap, the first retry is already capped. Zero attempts returns [].\n\nInputs are non-negative integers, attempts <= 30, and delays <= 1,000,000. This task has no jitter and never sleeps. Discuss with your partner how jitter and retryable error classification would fit into a real worker, but keep them out of this function.",
+    "topics": [
+      "api-design",
+      "testing"
+    ],
+    "tags": [
+      "api-design",
+      "testing"
+    ],
+    "difficulty": "mid",
+    "problemDifficulty": "easy",
+    "sourceType": "ai_generated",
+    "sourceNotes": "Original product-style practice task inspired by publicly described AI-assisted interview formats; not an employer question.",
+    "dateAdded": "2026-10-24",
+    "examples": [],
+    "constraints": [
+      "Implement solve(attempts, baseDelayMs, maxDelayMs). All inputs and outputs are JSON-compatible.",
+      "Use the coding partner as much as you want. Review changes, run tests, and explain your decisions."
+    ],
+    "taskKind": "implement",
+    "starterCode": "function solve(attempts, baseDelayMs, maxDelayMs) {\n  // Return the schedule; do not actually sleep.\n  return [];\n}\n",
+    "starterCodes": {
+      "javascript": "function solve(attempts, baseDelayMs, maxDelayMs) {\n  // Return the schedule; do not actually sleep.\n  return [];\n}\n",
+      "typescript": "function solve(attempts: any, baseDelayMs: any, maxDelayMs: any): any {\n  // Return the schedule; do not actually sleep.\n  return [];\n}\n",
+      "python": "def solve(attempts, baseDelayMs, maxDelayMs):\n    # Return the schedule; do not actually sleep.\n    return []\n"
+    },
+    "testCases": [
+      {
+        "name": "Capped backoff",
+        "args": [
+          5,
+          100,
+          500
+        ],
+        "expected": [
+          100,
+          200,
+          400,
+          500,
+          500
+        ]
+      },
+      {
+        "name": "No retries",
+        "args": [
+          0,
+          100,
+          1000
+        ],
+        "expected": []
+      },
+      {
+        "name": "Already capped",
+        "args": [
+          3,
+          1000,
+          200
+        ],
+        "expected": [
+          200,
+          200,
+          200
+        ]
+      },
+      {
+        "name": "Zero delay",
+        "args": [
+          3,
+          0,
+          100
+        ],
+        "expected": [
+          0,
+          0,
+          0
+        ]
+      }
+    ]
+  }
+]

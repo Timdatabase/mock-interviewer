@@ -1,11 +1,13 @@
 import type { SessionConfig } from "./config";
 export function buildInterviewOpening(config: SessionConfig, question: string) {
   const format =
-    config.interviewType === "technical"
-      ? "First we’ll clarify the problem, then discuss your approach, write code, and check a few test cases."
-      : config.interviewType === "behavioral"
-        ? "I’ll ask about your experience, then follow up on your actions, results, and what you learned."
-        : "We’ll clarify requirements, sketch a design, and explore tradeoffs and failure cases.";
+    config.interviewType === "ai-assisted"
+      ? "This is an AI-assisted coding round. You may use Patch, your coding partner, to plan, write, debug, and review code. I’m your interviewer: I’ll ask about your decisions, how you review AI suggestions, and how you verify the result. We’ll clarify the task, delegate useful work, review and test the code, then debrief."
+      : config.interviewType === "technical"
+        ? "First we’ll clarify the problem, then discuss your approach, write code, and check a few test cases."
+        : config.interviewType === "behavioral"
+          ? "I’ll ask about your experience, then follow up on your actions, results, and what you learned."
+          : "We’ll clarify requirements, sketch a design, and explore tradeoffs and failure cases.";
   const spokenQuestion =
     question.length > 1800
       ? `${question.slice(0, 1400)}. The complete question is in your workspace; take a moment to read it.`

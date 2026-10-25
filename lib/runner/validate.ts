@@ -46,5 +46,20 @@ export function matchesOutput(
         position.get(prerequisite)! < position.get(task)!,
     );
   }
-  return JSON.stringify(actual) === JSON.stringify(expected);
+  function canonical(value: unknown): unknown {
+    if (Array.isArray(value)) return value.map(canonical);
+    if (value && typeof value === "object")
+      return Object.fromEntries(
+        Object.keys(value)
+          .sort()
+          .map((key) => [
+            key,
+            canonical((value as Record<string, unknown>)[key]),
+          ]),
+      );
+    return value;
+  }
+  return (
+    JSON.stringify(canonical(actual)) === JSON.stringify(canonical(expected))
+  );
 }
