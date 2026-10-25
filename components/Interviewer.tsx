@@ -11,6 +11,7 @@ import {
 import { interviewerSystemPrompt } from "@/lib/interview/prompts";
 import { useElevenLabsProvider } from "@/lib/voice/elevenlabs";
 import Avatar from "./Avatar";
+import SignalLogo from "./SignalLogo";
 import CodeWorkspace, { type RunRecord } from "./CodeWorkspace";
 import CustomQuestionBank from "./CustomQuestionBank";
 import { parseCustomQuestions } from "@/lib/interview/custom";
@@ -329,7 +330,9 @@ function InterviewSession({
     return (
       <main className="shell">
         <header className="brand">
-          <Link href="/">● SIGNAL</Link>
+          <Link href="/" aria-label="Signal home">
+            <SignalLogo />
+          </Link>
           <span>SESSION REVIEW</span>
         </header>
         <section className="review-heading">
@@ -475,7 +478,9 @@ function InterviewSession({
       className={`room shell ${config.interviewType === "technical" ? "coding-room" : "discussion-room"} ${question ? "" : "no-question"} tab-${workTab}`}
     >
       <header className="brand">
-        <Link href="/">● SIGNAL</Link>
+        <Link href="/" aria-label="Signal home">
+          <SignalLogo />
+        </Link>
         <span>
           {config.interviewType.replace("-", " ")} / {config.role}
         </span>
