@@ -1741,3 +1741,330 @@ blockquote {
 .room .problem h2 {
   overflow-wrap: anywhere;
 }
+
+/* Dedicated workspace for the candidate's coding partner. */
+.room .workspace > .assistant-panel {
+  grid-column: 2;
+  grid-row: 2;
+  min-height: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 17px;
+  gap: 10px;
+}
+.room:not(.tab-assistant) .workspace > .assistant-panel {
+  display: none;
+}
+.room.tab-assistant .workspace > .coding-panel,
+.room.tab-assistant .workspace > .notes-panel,
+.room.tab-assistant .workspace > .transcript {
+  display: none;
+}
+.partner-heading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+.partner-mark {
+  width: 31px;
+  height: 31px;
+  display: grid;
+  place-items: center;
+  background: #e5efde;
+  color: #6b8d59;
+  border-radius: 9px;
+  font-size: 19px;
+}
+.partner-heading h2 {
+  font-size: 17px;
+  margin: 0;
+  letter-spacing: -0.5px;
+}
+.partner-heading h2 > span {
+  font-size: 10px;
+  color: #8b9b89;
+  font-weight: 400;
+  letter-spacing: 0;
+  margin-left: 6px;
+}
+.partner-heading p {
+  font-size: 9px;
+  margin: 3px 0 0;
+  color: #91a28c;
+}
+.partner-status {
+  margin-left: auto;
+  font-size: 9px;
+  color: #758f64;
+  background: #f0f6ea;
+  border: 1px solid #e0ead6;
+  border-radius: 20px;
+  padding: 5px 8px;
+  white-space: nowrap;
+}
+.partner-roles {
+  margin: 0;
+  padding: 9px 11px;
+  background: #f6f9f2;
+  border-radius: 7px;
+  color: #7e9272;
+  font-size: 10px;
+  line-height: 1.6;
+  flex-shrink: 0;
+}
+.partner-setup {
+  border: 1px solid #eadbb8;
+  border-radius: 7px;
+  background: #fffaf0;
+  padding: 10px;
+  flex-shrink: 0;
+}
+.partner-setup p {
+  margin: 0 0 7px;
+  font-size: 10px;
+  color: #8e7e5a;
+}
+.partner-setup .secondary {
+  font-size: 10px;
+  padding: 6px 9px;
+}
+.partner-actions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.partner-actions button {
+  flex: 1;
+  font-size: 10px;
+  padding: 8px 4px;
+  background: white;
+  border: 1px solid #dfe7d7;
+  border-radius: 6px;
+  color: #758b67;
+}
+.partner-actions button:hover:not(:disabled) {
+  background: #edf5e5;
+}
+.partner-messages {
+  flex: 1;
+  min-height: 70px;
+  overflow: auto;
+  padding: 4px 3px;
+}
+.partner-empty {
+  text-align: center;
+  max-width: 330px;
+  margin: 24px auto;
+}
+.partner-empty > span {
+  color: #a3bd90;
+  font-size: 28px;
+}
+.partner-empty h3 {
+  font-size: 15px;
+  margin: 10px 0;
+  letter-spacing: -0.2px;
+}
+.partner-empty p {
+  font-size: 11px;
+  color: #8a9d7d;
+}
+.partner-message {
+  padding: 13px;
+  margin: 0 0 12px;
+  background: #f5f8f0;
+  border: 1px solid #e6ecdf;
+  border-radius: 9px;
+}
+.partner-message.user {
+  background: #edf2f1;
+  border-color: #e0e7e3;
+}
+.partner-message > small {
+  font-size: 8px;
+  letter-spacing: 0.08em;
+  color: #8c9f7f;
+  font-weight: 650;
+}
+.partner-message > p {
+  font-size: 12px;
+  color: #5d7756;
+  line-height: 1.8;
+  margin: 7px 0 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.partner-checklist {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid #e2e9d8;
+  font-size: 10px;
+  color: #81956e;
+}
+.partner-checklist strong {
+  font-size: 10px;
+  font-weight: 550;
+}
+.partner-checklist ul {
+  padding-left: 16px;
+  line-height: 1.8;
+  margin: 7px 0 0;
+}
+.partner-proposal {
+  margin-top: 13px;
+  padding: 11px;
+  border: 1px solid #d7e3cc;
+  background: #fff;
+  border-radius: 7px;
+}
+.partner-proposal summary {
+  font-size: 10px;
+  cursor: pointer;
+  color: #728c60;
+}
+.partner-proposal summary > span {
+  float: right;
+  font-size: 9px;
+}
+.proposal-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 9px;
+  margin-top: 12px;
+}
+.proposal-columns > div {
+  min-width: 0;
+}
+.proposal-columns strong {
+  font-size: 9px;
+  color: #8ca17b;
+  font-weight: 500;
+}
+.proposal-columns pre {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 10px;
+  line-height: 1.6;
+  max-height: 190px;
+  overflow: auto;
+  padding: 10px;
+  white-space: pre;
+  background: #f3f7ec;
+  margin: 6px 0 10px;
+  color: #718663;
+}
+.partner-proposal .primary {
+  padding: 8px 12px;
+  font-size: 10px;
+}
+.proposal-stale {
+  color: #a18b57;
+  font-size: 9px;
+  margin-bottom: 0;
+}
+.partner-thinking {
+  font-size: 11px;
+  color: #8aa078;
+  padding: 12px;
+}
+.partner-undo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: #f1f7e9;
+  padding: 7px 9px;
+  border-radius: 6px;
+  color: #8ba274;
+  font-size: 9px;
+  flex-shrink: 0;
+}
+.partner-undo .secondary {
+  font-size: 9px;
+  padding: 6px 8px;
+  white-space: nowrap;
+}
+.partner-composer {
+  flex-shrink: 0;
+  border-top: 1px solid #e5ecde;
+  padding-top: 12px;
+}
+.partner-composer label {
+  font-size: 10px;
+  color: #7b9270;
+}
+.partner-composer textarea {
+  font-size: 11px;
+  line-height: 1.7;
+  margin: 7px 0;
+  background: #fbfdf8;
+  border-color: #e2ead8;
+  color: #657e57;
+  max-height: 150px;
+}
+.partner-composer > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.partner-composer > div > span {
+  color: #9eaf90;
+  font-size: 8px;
+}
+.partner-composer .primary,
+.partner-composer .secondary {
+  font-size: 10px;
+  padding: 8px 12px;
+  white-space: nowrap;
+}
+.partner-disclosure {
+  flex-shrink: 0;
+  margin: 0;
+  font-size: 8px;
+  line-height: 1.6;
+  color: #a4b498;
+}
+.assistant-panel > .alert {
+  margin: 0;
+  padding: 8px 11px;
+  font-size: 10px;
+  max-height: 100px;
+  overflow: auto;
+  flex-shrink: 0;
+}
+.ai-review-evidence {
+  margin-top: 20px;
+}
+@media (max-width: 850px) {
+  .room .workspace > .assistant-panel {
+    grid-column: 1;
+    padding: 12px;
+    gap: 8px;
+  }
+  .proposal-columns {
+    grid-template-columns: 1fr;
+  }
+  .partner-disclosure {
+    font-size: 8px;
+  }
+  .partner-composer > div > span {
+    max-width: 180px;
+  }
+  .room .work-tabs button {
+    font-size: 9px;
+    padding-left: 3px;
+    padding-right: 3px;
+  }
+}
+.ai-round-rules {
+  border: 1px solid #dce8d4;
+  background: #f3f8ed;
+  padding: 8px 10px;
+  border-radius: 6px;
+  color: #839c70;
+  font-size: 9px;
+  line-height: 1.7;
+}

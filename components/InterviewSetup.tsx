@@ -2,7 +2,11 @@
 import { useState } from "react";
 import Form from "next/form";
 import Link from "next/link";
-import { topicOptions, type SessionConfig } from "@/lib/interview/config";
+import {
+  topicOptions,
+  isCodingInterview,
+  type SessionConfig,
+} from "@/lib/interview/config";
 import SignalLogo from "./SignalLogo";
 import Avatar from "./Avatar";
 const formats = [
@@ -12,6 +16,13 @@ const formats = [
     icon: "{ }",
     description:
       "Explain your approach, write a solution, and put it to the test.",
+  },
+  {
+    value: "ai-assisted",
+    label: "AI-assisted",
+    icon: "✦",
+    description:
+      "Build a practical coding task with an AI partner. Review its code, run tests, and explain your decisions.",
   },
   {
     value: "behavioral",
@@ -182,14 +193,18 @@ export default function InterviewSetup() {
             </label>
             <label>
               Time to practice
-              <select name="duration" defaultValue="30">
+              <select
+                name="duration"
+                key={type}
+                defaultValue={type === "ai-assisted" ? "45" : "30"}
+              >
                 <option value="15">15 minutes</option>
                 <option value="30">30 minutes</option>
                 <option value="45">45 minutes</option>
                 <option value="60">60 minutes</option>
               </select>
             </label>
-            {type === "technical" && (
+            {isCodingInterview(type) && (
               <label className="full-field">
                 Problem difficulty
                 <select name="problemDifficulty" defaultValue="any">

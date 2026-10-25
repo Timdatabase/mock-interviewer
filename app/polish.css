@@ -1192,3 +1192,15 @@ textarea:focus-visible {
 .room .work-tabs button[aria-pressed="true"] {
   color: #476b50;
 }
+.welcome-form .format-options {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.partner-message > p {
+  color: #486446;
+}
+.partner-checklist {
+  color: #677e59;
+}
+.partner-composer textarea {
+  color: #506b45;
+}
