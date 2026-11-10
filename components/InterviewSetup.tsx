@@ -8,7 +8,7 @@ import {
   type SessionConfig,
 } from "@/lib/interview/config";
 import SignalLogo from "./SignalLogo";
-import Avatar from "./Avatar";
+import SessionPreview from "./SessionPreview";
 const formats = [
   {
     value: "technical",
@@ -42,6 +42,8 @@ const formats = [
 export default function InterviewSetup() {
   const [type, setType] = useState<SessionConfig["interviewType"]>("technical");
   const [tags, setTags] = useState<string[]>([]);
+  const [duration, setDuration] = useState("30");
+  const [level, setLevel] = useState("mid");
   return (
     <main className="welcome-page">
       <header className="welcome-header">
@@ -62,7 +64,14 @@ export default function InterviewSetup() {
             <br />
             next interview
             <br />
-            <em>ready.</em>
+            <em className="rotating-heading">
+              <span className="sr-only">ready.</span>
+              <span className="rotating-words" aria-hidden="true">
+                <span>ready.</span>
+                <span>confident.</span>
+                <span>yourself.</span>
+              </span>
+            </em>
           </h1>
           <p className="welcome-description">
             A focused interviewer. A real coding workspace. Get comfortable
@@ -79,68 +88,7 @@ export default function InterviewSetup() {
               <i>＋</i> Your questions
             </span>
           </div>
-          <div
-            className="room-preview"
-            aria-label="Illustration of the interview room"
-          >
-            <div className="preview-topline">
-              <span>
-                <i />
-                <i />
-                <i />
-              </span>
-              <span>YOUR ROOM, AT A GLANCE</span>
-              <span>↗</span>
-            </div>
-            <div className="preview-conversation">
-              <div className="preview-person">
-                <Avatar state="idle" />
-                <span className="preview-person-tag">
-                  Sam <i>Interviewer</i>
-                </span>
-              </div>
-              <div className="preview-dialogue">
-                <span className="preview-overline">
-                  A CONVERSATION THAT FOLLOWS YOUR THINKING
-                </span>
-                <p>
-                  “Walk me through
-                  <br />
-                  your approach.”
-                </p>
-                <div className="preview-wave" aria-hidden="true">
-                  {[
-                    8, 14, 23, 15, 30, 20, 11, 24, 35, 18, 27, 12, 19, 9, 16, 7,
-                  ].map((height, index) => (
-                    <i key={index} style={{ height }} />
-                  ))}
-                </div>
-              </div>
-            </div>
-            <div className="preview-code">
-              <span className="preview-code-label">
-                solution.py <span>Python · JavaScript · TypeScript</span>
-              </span>
-              <pre>
-                <span className="code-line-number">1</span>{" "}
-                <span className="preview-code-keyword">def</span>{" "}
-                <span className="preview-code-function">solve</span>(prices,
-                budget):{"\n"}
-                <span className="code-line-number">2</span>{" "}
-                <span className="preview-code-comment">
-                  # Start with your approach.
-                </span>
-                {"\n"}
-                <span className="code-line-number">3</span>{" "}
-                <span className="preview-code-keyword">pass</span>
-                <span className="preview-cursor" />
-              </pre>
-              <div className="preview-code-footer">
-                <span>Think it through. Try it out.</span>
-                <span>▶ Run tests</span>
-              </div>
-            </div>
-          </div>
+          <SessionPreview key={type} type={type} />
           <p className="welcome-bottom-note">
             <span>01</span> Choose a focus <b>→</b>
             <span>02</span> Work it through <b>→</b>
@@ -169,6 +117,7 @@ export default function InterviewSetup() {
                   onClick={() => {
                     setType(format.value);
                     setTags([]);
+                    setDuration(format.value === "ai-assisted" ? "45" : "30");
                   }}
                 >
                   <span className="format-icon" aria-hidden="true">
@@ -185,7 +134,11 @@ export default function InterviewSetup() {
           <div className="fields session-fields">
             <label>
               Experience level
-              <select name="difficulty" defaultValue="mid">
+              <select
+                name="difficulty"
+                value={level}
+                onChange={(event) => setLevel(event.target.value)}
+              >
                 <option value="junior">Junior</option>
                 <option value="mid">Mid-level</option>
                 <option value="senior">Senior</option>
@@ -195,8 +148,8 @@ export default function InterviewSetup() {
               Time to practice
               <select
                 name="duration"
-                key={type}
-                defaultValue={type === "ai-assisted" ? "45" : "30"}
+                value={duration}
+                onChange={(event) => setDuration(event.target.value)}
               >
                 <option value="15">15 minutes</option>
                 <option value="30">30 minutes</option>
@@ -216,70 +169,102 @@ export default function InterviewSetup() {
               </label>
             )}
           </div>
-          <fieldset className="topic-fieldset">
-            <legend>
-              Pick your topics <span>Optional</span>
-            </legend>
-            <div className="chips">
-              {topicOptions[type].map((tag) => (
-                <button
-                  type="button"
-                  key={tag}
-                  aria-pressed={tags.includes(tag)}
-                  className={tags.includes(tag) ? "selected" : ""}
-                  onClick={() =>
-                    setTags((previous) =>
-                      previous.includes(tag)
-                        ? previous.filter((value) => value !== tag)
-                        : [...previous, tag],
-                    )
-                  }
-                >
-                  {tags.includes(tag) && <span aria-hidden="true">✓ </span>}
-                  {tag.replaceAll("-", " ")}
-                </button>
-              ))}
-            </div>
-            <p className="field-hint">
-              Leave these open for a random question. You can bring your own
-              questions inside.
-            </p>
-          </fieldset>
-          <details className="setup-details">
+          <details className="practice-preferences">
             <summary>
-              Role & company <span>Personalize your conversation</span>
+              Topics & preferences{" "}
+              <span>
+                {tags.length ? `${tags.length} selected` : "Optional"}
+              </span>
               <i aria-hidden="true">＋</i>
             </summary>
-            <div className="fields">
-              <label>
-                Target role
+            <div>
+              <fieldset className="topic-fieldset">
+                <legend>
+                  Pick your topics <span>Optional</span>
+                </legend>
+                <div className="chips">
+                  {topicOptions[type].map((tag) => (
+                    <button
+                      type="button"
+                      key={tag}
+                      aria-pressed={tags.includes(tag)}
+                      className={tags.includes(tag) ? "selected" : ""}
+                      onClick={() =>
+                        setTags((previous) =>
+                          previous.includes(tag)
+                            ? previous.filter((value) => value !== tag)
+                            : [...previous, tag],
+                        )
+                      }
+                    >
+                      {tags.includes(tag) && <span aria-hidden="true">✓ </span>}
+                      {tag.replaceAll("-", " ")}
+                    </button>
+                  ))}
+                </div>
+                <p className="field-hint">
+                  Leave these open for a random question. You can bring your own
+                  questions inside.
+                </p>
+              </fieldset>
+              <details className="setup-details">
+                <summary>
+                  Role & company <span>Personalize your conversation</span>
+                  <i aria-hidden="true">＋</i>
+                </summary>
+                <div className="fields">
+                  <label>
+                    Target role
+                    <input
+                      name="role"
+                      defaultValue="Software Engineer"
+                      required
+                      maxLength={100}
+                    />
+                  </label>
+                  <label>
+                    Company focus
+                    <input
+                      name="company"
+                      defaultValue="Generic"
+                      maxLength={80}
+                    />
+                    <small>Generic uses general practice questions.</small>
+                  </label>
+                </div>
+              </details>
+              <label className="check setup-repeat">
+                <input type="hidden" name="avoidRecent" value="false" />
                 <input
-                  name="role"
-                  defaultValue="Software Engineer"
-                  required
-                  maxLength={100}
+                  type="checkbox"
+                  name="avoidRecent"
+                  value="true"
+                  defaultChecked
                 />
-              </label>
-              <label>
-                Company focus
-                <input name="company" defaultValue="Generic" maxLength={80} />
-                <small>Generic uses general practice questions.</small>
+                <span>
+                  Keep it fresh{" "}
+                  <small>Prefer questions I haven’t practiced recently.</small>
+                </span>
               </label>
             </div>
           </details>
-          <label className="check setup-repeat">
-            <input type="hidden" name="avoidRecent" value="false" />
-            <input
-              type="checkbox"
-              name="avoidRecent"
-              value="true"
-              defaultChecked
-            />
-            <span>
-              Keep it fresh{" "}
-              <small>Prefer questions I haven’t practiced recently.</small>
-            </span>
-          </label>
+          <div className="session-summary" aria-live="polite">
+            <span>Your session</span>
+            <strong>
+              {duration} min ·{" "}
+              {formats.find((format) => format.value === type)?.label} ·{" "}
+              {level === "mid"
+                ? "Mid-level"
+                : level === "junior"
+                  ? "Junior"
+                  : "Senior"}
+            </strong>
+            <small>
+              {tags.length
+                ? `${tags.length} topic${tags.length === 1 ? "" : "s"} selected`
+                : "All topics · a fresh question"}
+            </small>
+          </div>
           <button type="submit" className="primary wide enter-room">
             <span>Enter the interview room</span>
             <span className="button-arrow" aria-hidden="true">

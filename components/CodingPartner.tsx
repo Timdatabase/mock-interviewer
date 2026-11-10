@@ -281,23 +281,6 @@ export default function CodingPartner({
               : "Full assistance"}
         </span>
       </header>
-      <label className="partner-direct-write">
-        <input
-          type="checkbox"
-          checked={directWrite}
-          onChange={(event) => setDirectWrite(event.target.checked)}
-        />
-        <span>
-          Write directly to editor
-          <small>
-            Requested changes appear in your solution. Undo is available.
-          </small>
-        </span>
-      </label>
-      <p className="partner-roles">
-        Sam leads the interview. Patch helps you plan, write, and debug. You
-        review and test the result.
-      </p>
       {configured === false && (
         <div className="partner-setup">
           <p>
@@ -310,17 +293,43 @@ export default function CodingPartner({
           </button>
         </div>
       )}
-      <div className="partner-actions">
-        {actions.map(([label, text]) => (
-          <button
-            key={label}
-            disabled={pending || configured === false}
-            onClick={() => ask(text)}
-          >
-            {label}
-          </button>
-        ))}
-      </div>
+      <details className="partner-options">
+        <summary>Partner options</summary>
+        <div>
+          <label className="partner-direct-write">
+            <input
+              type="checkbox"
+              checked={directWrite}
+              onChange={(event) => setDirectWrite(event.target.checked)}
+            />
+            <span>
+              Write directly to editor
+              <small>
+                Requested changes appear in your solution. Undo is available.
+              </small>
+            </span>
+          </label>
+          <p className="partner-roles">
+            Sam leads the interview. Patch helps you plan, write, and debug. You
+            review and test the result.
+          </p>
+          <div className="partner-actions">
+            {actions.map(([label, text]) => (
+              <button
+                key={label}
+                disabled={pending || configured === false}
+                onClick={() => ask(text)}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+          <p className="partner-disclosure">
+            Requests go to OpenAI. Review changes and run tests before accepting
+            the result.
+          </p>
+        </div>
+      </details>
       <div className="partner-messages" ref={chat} aria-live="polite">
         {!messages.length && (
           <div className="partner-empty">
@@ -495,10 +504,6 @@ export default function CodingPartner({
           )}
         </div>
       </form>
-      <p className="partner-disclosure">
-        Requests go to OpenAI. Direct write updates your editor after a request;
-        it never runs code automatically. Review and test the result.
-      </p>
     </section>
   );
 }

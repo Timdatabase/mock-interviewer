@@ -1,0 +1,638 @@
+/* The shared dark palette covers setup, practice, and session review. */
+:root {
+  color-scheme: dark;
+  --background: #12191f;
+  --foreground: #e1e8ec;
+  --ink: #e1e8ec;
+  --muted: #9caeb8;
+  --line: #2c3a43;
+  --accent: #99c6c4;
+}
+html,
+body,
+.room.shell {
+  background: var(--background);
+  color: var(--ink);
+}
+::selection {
+  background: #37565e;
+  color: #ffffff;
+}
+* {
+  scrollbar-color: #455d68 #162128;
+}
+
+:root
+  :is(
+    .card,
+    .room .card,
+    .room-preview,
+    .welcome-form,
+    .ide-toolbar,
+    .ide-audio-options,
+    .ide-audio-menu > summary,
+    .room.ide-room .partner-proposal
+  ) {
+  background: #1b2730;
+  border-color: var(--line);
+  color: var(--ink);
+  box-shadow: none;
+}
+:root
+  :is(
+    input:not([type="checkbox"]):not([type="range"]),
+    select,
+    textarea,
+    .welcome-form input:not([type="checkbox"]),
+    .welcome-form select,
+    .room .notes-panel textarea,
+    .room .test-editor textarea,
+    .partner-composer textarea,
+    .custom-bank textarea
+  ) {
+  background: #141f27;
+  border-color: #3a4e59;
+  color: #d9e5e9;
+}
+input::placeholder,
+textarea::placeholder {
+  color: #8da1ac;
+}
+input[type="checkbox"],
+input[type="range"] {
+  accent-color: #99c6c4;
+}
+:root
+  :is(
+    .primary,
+    .room .interviewer-card .primary,
+    .room .ask-sam .primary,
+    .room .run-button
+  ) {
+  background: #345c60;
+  border-color: #5b8587;
+  color: #e0f0ef;
+}
+:root .primary:hover:not(:disabled),
+:root .room .run-button:hover:not(:disabled) {
+  background: #416f72;
+  border-color: #8cb4b4;
+}
+:root
+  :is(
+    .secondary,
+    .room .interviewer-card .secondary,
+    .room .bank-header .secondary,
+    .bank-header .secondary,
+    .partner-actions button,
+    .format-options button,
+    .welcome-form .chips button,
+    .room .quick-actions button
+  ) {
+  background: #223039;
+  border-color: #354953;
+  color: #c6d5dd;
+}
+:root
+  :is(
+    .secondary,
+    .partner-actions button,
+    .format-options button,
+    .welcome-form .chips button
+  ):hover:not(:disabled) {
+  background: #2d404a;
+  border-color: #70989b;
+}
+:root
+  :is(
+    .format-options button[aria-pressed="true"],
+    .welcome-form .chips button.selected,
+    .room .work-tabs button[aria-pressed="true"]
+  ) {
+  background: #293f48;
+  border-color: #63888e;
+  color: #d2e8e8;
+}
+:root
+  :is(
+    .signal-logo,
+    .welcome-story h1,
+    .room .problem h2,
+    .room .problem h3,
+    .room .interviewer-card h2,
+    .partner-empty h3,
+    .ide-task-summary > span,
+    .ide-drawer-heading h3
+  ) {
+  color: #e1e8ec;
+}
+:root
+  :is(
+    .welcome-story h1 em,
+    .logo-period,
+    .preview-code-keyword,
+    .room .session-flow .current,
+    .ide-session strong
+  ) {
+  color: #99c6c4;
+}
+:root
+  :is(
+    .welcome-description,
+    .welcome-kicker,
+    .workspace-label,
+    .welcome-capabilities > span,
+    .welcome-bottom-note,
+    .welcome-footer,
+    .form-intro,
+    .form-heading .eyebrow,
+    .format-description,
+    .field-hint,
+    .form-footnote,
+    .setup-repeat small,
+    .setup-details small,
+    .setup-details summary > span,
+    .room .brand > span,
+    .room .audio-status,
+    .room .interviewer-card .fine,
+    .room .awareness-card > p,
+    .room .bank-header .eyebrow,
+    .room .problem-text,
+    .room .problem ul,
+    .room .problem .eyebrow,
+    .room .reference,
+    .room .run-empty,
+    .room .test-editor p,
+    .room .approach-actions > span,
+    .room .messages small,
+    .room > footer,
+    .partner-heading p,
+    .partner-heading h2 > span,
+    .partner-empty p,
+    .partner-disclosure,
+    .partner-composer > div > span,
+    .partner-direct-write small,
+    .ide-session > span:last-child,
+    .ide-task-summary > small
+  ) {
+  color: #9caeb8;
+}
+:root
+  :is(
+    .welcome-form label,
+    .welcome-form legend,
+    .setup-details summary,
+    .room .notes-panel label,
+    .room .test-editor label,
+    .room .audio-controls label,
+    .room .awareness-card .check,
+    .room .awareness-title strong,
+    .partner-composer label,
+    .partner-message > p,
+    .room .messages p,
+    .partner-checklist,
+    .partner-proposal summary,
+    .proposal-columns strong,
+    .ide-audio-options > label,
+    .ide-audio-menu,
+    .room .session-flow button
+  ) {
+  color: #bfd0d9;
+}
+:root
+  :is(
+    .welcome-header,
+    .welcome-footer,
+    .welcome-bottom-note,
+    .setup-details,
+    .partner-composer,
+    .partner-checklist
+  ) {
+  border-color: var(--line);
+}
+:root
+  :is(
+    .preview-topline,
+    .room .work-tabs,
+    .room .output-panel,
+    .room .ask-sam,
+    .room .custom-bank,
+    .custom-bank,
+    .room .session-flow,
+    .partner-message,
+    .partner-proposal,
+    .room .messages > div,
+    .review-prompt
+  ) {
+  background: #162128;
+  border-color: var(--line);
+}
+:root :is(.room .problem pre, .proposal-columns pre, .review-grid pre) {
+  background: #141f27;
+  border-color: var(--line);
+  color: #c7d8de;
+}
+:root
+  :is(
+    .session-chip,
+    .welcome-capabilities i,
+    .partner-mark,
+    .partner-status,
+    .partner-roles,
+    .partner-direct-write,
+    .partner-write-status,
+    .partner-undo,
+    .room .awareness-card,
+    .ai-round-rules,
+    .notice,
+    .room .difficulty,
+    .room .timer,
+    .room .output-tabs button span,
+    .partner-message.user,
+    .room .messages > .user
+  ) {
+  background: #23363d;
+  border-color: #3a565e;
+  color: #b7d3d5;
+}
+:root
+  :is(
+    .partner-message > small,
+    .partner-thinking,
+    .partner-empty > span,
+    .room .output-tabs button[aria-pressed="true"],
+    .ide-task-summary > i
+  ) {
+  color: #99c6c4;
+}
+:root :is(.room .work-tabs button, .room .output-tabs button) {
+  color: #aabec9;
+}
+:root
+  :is(
+    .room .output-tabs,
+    .room .coding-panel,
+    .room.ide-room .workspace > .assistant-panel,
+    .room.ide-room .workspace > .problem
+  ) {
+  border-color: var(--line);
+}
+:root
+  :is(
+    .room .code-titlebar,
+    .room .execution-toolbar,
+    .room .file-tab,
+    .preview-code
+  ) {
+  background: #1d2b34;
+  border-color: #354953;
+}
+:root .room .file-tab {
+  color: #d2e8e8;
+  border-top-color: #99c6c4;
+}
+:root .room .discuss-button {
+  background: #2b424a;
+  color: #c5dbe0;
+  border-color: #496873;
+}
+:root :is(.alert, .partner-setup) {
+  background: #352c29;
+  border-color: #416f72;
+  color: #dfbdaa;
+}
+:root .partner-setup p {
+  color: #d6bca8;
+}
+:root :is(.proposal-stale, .room .timer.expired) {
+  color: #d3bc99;
+}
+:root :is(.room .avatar-scene, .preview-person .avatar-scene) {
+  background: #283d44;
+}
+:root .preview-dialogue p {
+  color: #c6d5dd;
+}
+:root .preview-topline {
+  color: #9caeb8;
+}
+:root .ide-splitter {
+  background: #2d404a;
+  border-color: #3a4e59;
+}
+:root .ide-splitter > span {
+  background: #8aaab2;
+}
+:root .ide-splitter:hover,
+:root .ide-splitter:focus-visible {
+  background: #526f79;
+}
+
+/* Secondary states use the same dark surfaces as the main workspace. */
+:root
+  :is(
+    .tabs,
+    .output-panel,
+    .ask-sam,
+    .messages > div,
+    .avatar-scene,
+    .mini-avatar,
+    .audio-meter,
+    .room .audio-meter,
+    .room .avatar-halo,
+    .avatar-halo,
+    .avatar-badge,
+    .room .avatar-badge,
+    .ide-audio-menu[open] > label
+  ) {
+  background: #21323b;
+  border-color: #354953;
+  color: #c6d5dd;
+}
+:root :is(pre, .test-values pre, .console-output pre) {
+  background: #141f27;
+  color: #c7d8de;
+}
+:root
+  :is(
+    .messages > .user,
+    .output-tabs button span,
+    .tabs button.active,
+    .preview-code-footer > span:last-child
+  ) {
+  background: #293f48;
+  color: #d2e8e8;
+}
+:root :is(.stale-run, .stop-button, .room .timer.expired) {
+  background: #23363d;
+  border-color: #6c6758;
+  color: #bfd0d9;
+}
+:root .run-button:hover:not(:disabled) {
+  background: #416f72;
+  color: #e0f0ef;
+}
+:root .success-text {
+  color: #99c6c4 !important;
+}
+:root .failure-text {
+  color: #d3a7a4 !important;
+}
+:root .room > .brand {
+  border-color: var(--line);
+}
+
+/* Give code the majority of the desktop room, with compact supporting panels. */
+.room > .ide-toolbar {
+  flex-shrink: 0;
+  gap: 12px;
+  padding: 8px 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+.room > .ide-toolbar .ide-session-controls > .secondary,
+.room > .ide-toolbar .ide-session-controls > .primary {
+  font-size: 11px;
+  padding: 8px 12px;
+}
+.room > .room-grid {
+  display: block;
+}
+.room .workspace {
+  height: 100%;
+}
+.session-menu {
+  position: relative;
+  font-size: 11px;
+}
+.session-menu > summary,
+.partner-options > summary,
+.question-source-menu > summary {
+  cursor: pointer;
+  color: #aabec9;
+  padding: 8px 10px;
+}
+.session-menu[open] {
+  z-index: 30;
+}
+.session-menu-content {
+  position: absolute;
+  right: 0;
+  top: 38px;
+  width: min(340px, calc(100vw - 28px));
+  max-height: 65dvh;
+  overflow: auto;
+  display: grid;
+  gap: 8px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #1b2730;
+  box-shadow: 0 16px 40px #00000066;
+}
+.session-menu-content > .secondary {
+  justify-content: flex-start;
+  text-align: left;
+  font-size: 12px;
+}
+.session-phase {
+  color: var(--muted);
+  font-size: 11px;
+}
+.session-menu .custom-bank {
+  padding: 10px;
+  margin: 6px 0 0;
+}
+.session-menu .bank-header .eyebrow {
+  display: none;
+}
+.partner-options {
+  flex-shrink: 0;
+  border-bottom: 1px solid var(--line);
+}
+.partner-options > summary {
+  font-size: 10px;
+  padding: 5px 0 9px;
+}
+.partner-options > div {
+  display: grid;
+  gap: 10px;
+  padding: 4px 0 12px;
+}
+.room.ide-room .partner-heading p,
+.room.ide-room .partner-status {
+  display: none;
+}
+.room .execution-toolbar > span {
+  display: none;
+}
+.room .execution-toolbar {
+  justify-content: flex-end;
+}
+.room .discuss-button:disabled {
+  display: none;
+}
+.room.ide-room .workspace {
+  grid-template-rows: auto minmax(0, 1fr);
+}
+.room.ide-room .workspace > .problem {
+  grid-row: 1;
+}
+.room.ide-room .workspace > .coding-panel,
+.room.ide-room .workspace > .assistant-panel,
+.room.ide-room .ide-splitter {
+  grid-row: 2;
+}
+.room.ide-room.no-question .workspace {
+  grid-template-rows: minmax(0, 1fr);
+}
+.room.ide-room.no-question .workspace > .problem {
+  grid-row: 1;
+}
+@media (min-width: 851px) {
+  .room:not(.ide-room) .work-tabs {
+    display: none;
+  }
+  .room:not(.ide-room) .workspace {
+    grid-template-rows: minmax(0, 1fr) auto;
+  }
+  .room:not(.ide-room) .workspace > .problem {
+    grid-row: 1 / 3;
+  }
+  .room:not(.ide-room) .workspace > .coding-panel,
+  .room:not(.ide-room) .workspace > .notes-panel,
+  .room:not(.ide-room) .workspace > .transcript {
+    grid-row: 1;
+  }
+  .room:not(.ide-room) .ask-sam {
+    grid-row: 2;
+  }
+}
+.room.ide-room .workspace > .problem {
+  display: block;
+}
+@media (min-width: 851px) {
+  .room.coding-room.shell {
+    max-width: none;
+    padding: 10px 14px;
+  }
+  .room.coding-room > .room-grid {
+    grid-template-columns: 170px minmax(0, 1fr);
+    gap: 10px;
+  }
+  .room.coding-room .workspace {
+    grid-template-columns: minmax(220px, 22%) minmax(0, 1fr);
+    gap: 8px 10px;
+  }
+  .room.coding-room .workspace > .problem {
+    padding: 16px;
+  }
+  .room.coding-room .coding-panel .output-panel {
+    flex-basis: 23%;
+  }
+}
+@media (min-width: 761px) {
+  .room.ide-room .workspace {
+    grid-template-columns: minmax(0, 1fr) 6px clamp(
+        260px,
+        var(--partner-width, 300px),
+        32%
+      );
+    gap: 6px 0;
+  }
+  .room.ide-room .workspace > .problem {
+    max-height: 26dvh;
+  }
+  .room.ide-room.no-question .workspace > .problem {
+    max-height: none;
+  }
+}
+@media (max-width: 760px) {
+  .room.ide-room .workspace {
+    grid-template-rows: auto minmax(400px, 72dvh) minmax(310px, 46dvh);
+  }
+  .room.ide-room .workspace > .assistant-panel {
+    grid-row: 3;
+  }
+  .room.ide-room.no-question .workspace {
+    grid-template-rows: minmax(0, 1fr);
+  }
+}
+
+/* Before selection, the welcome state fills the available room. */
+.room.no-question .workspace {
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
+  overflow: auto;
+}
+.room.no-question .workspace > .problem {
+  display: block;
+  grid-column: 1 / -1;
+  grid-row: 1 / -1;
+  width: 100%;
+  min-width: 0;
+  height: 100%;
+  max-height: none;
+  padding: clamp(16px, 4vw, 40px);
+  overflow: auto;
+}
+.room.no-question .work-tabs,
+.room.no-question .problem > .section-top,
+.room.no-question .problem > .ide-task-summary {
+  display: none;
+}
+.room.no-question .problem .empty {
+  width: 100%;
+  max-width: 420px;
+  margin: clamp(16px, 10dvh, 90px) auto;
+}
+.room.no-question .problem .empty h2 {
+  font-size: clamp(22px, 4vw, 34px);
+  line-height: 1.25;
+  margin: 16px 0;
+}
+.room.no-question .empty p {
+  line-height: 1.7;
+  margin-bottom: 24px;
+}
+
+/* Sam stays visible without a separate sidebar. */
+.sam-presence {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.room .sam-presence .avatar-scene {
+  display: flex;
+  width: 64px;
+  height: 64px;
+  flex: 0 0 64px;
+  border-radius: 50%;
+  border: 1px solid #45636d;
+}
+.room .sam-presence .avatar-scene svg {
+  width: 76px;
+  height: 76px;
+  flex-shrink: 0;
+}
+.room .sam-presence .avatar-halo,
+.room .sam-presence .avatar-badge {
+  display: none;
+}
+.room .sam-presence strong {
+  display: block;
+  color: #e1e8ec;
+  font-size: 14px;
+}
+.sam-presence strong > span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 400;
+  margin-left: 6px;
+}
+.sam-presence p {
+  color: #99c6c4;
+  font-size: 11px;
+  margin: 5px 0 0;
+}

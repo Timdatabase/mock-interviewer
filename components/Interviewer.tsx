@@ -14,8 +14,8 @@ import {
 } from "@/lib/interview/opening";
 import { interviewerSystemPrompt } from "@/lib/interview/prompts";
 import { useElevenLabsProvider } from "@/lib/voice/elevenlabs";
-import Avatar from "./Avatar";
 import SignalLogo from "./SignalLogo";
+import Avatar from "./Avatar";
 import CodeWorkspace, { type RunRecord } from "./CodeWorkspace";
 import CustomQuestionBank from "./CustomQuestionBank";
 import { parseCustomQuestions } from "@/lib/interview/custom";
@@ -82,7 +82,7 @@ function InterviewSession({
     questionId: initialQuestion?.id,
   });
   const [taskExpanded, setTaskExpanded] = useState(!initialQuestion);
-  const [partnerWidth, setPartnerWidth] = useState(360);
+  const [partnerWidth, setPartnerWidth] = useState(300);
   const workspaceElement = useRef<HTMLElement>(null);
   useEffect(() => {
     if (!aiMode || !workspaceElement.current) return;
@@ -609,17 +609,6 @@ function InterviewSession({
           {clock}
         </div>
       </header>
-      <div className="room-toolbar">
-        <span>
-          {config.company === "Generic" ? "General practice" : config.company}{" "}
-          <i> / </i> {config.difficulty} <i> / </i> {config.duration} min
-        </span>
-        <span>
-          {question
-            ? `${seen.filter((id) => (source === "custom" ? customBank.some((item) => item.id === id) : !id.startsWith("custom-"))).length} / ${total} questions`
-            : "Your room is ready"}
-        </span>
-      </div>
       {(error || voice.error) && (
         <p className="alert" role="alert">
           {error || voice.error}
@@ -635,101 +624,80 @@ function InterviewSession({
           Time is up. Finish your thought, then end the session to reflect.
         </p>
       )}
-      <CustomQuestionBank
-        count={customBank.length}
-        active={source === "custom"}
-        onLoad={loadCustomBank}
-        onCurated={() => {
-          setSource("curated");
-          setNotice("Curated bank selected. Pick your next question.");
-        }}
-      />
-      <div className="room-grid">
-        {!aiMode && (
-          <aside>
-            <section className="card interviewer-card">
-              <Avatar
-                state={
-                  starting
-                    ? "connecting"
-                    : voice.status === "connected"
-                      ? voice.isSpeaking
-                        ? "speaking"
-                        : "listening"
-                      : "idle"
-                }
-              />
-              <h2>
+      <div className="ide-toolbar">
+        <div className="ide-session">
+          <div className="sam-presence">
+            <Avatar
+              state={
+                starting || voice.status === "connecting"
+                  ? "connecting"
+                  : voice.status === "connected"
+                    ? voice.isSpeaking
+                      ? "speaking"
+                      : "listening"
+                    : "idle"
+              }
+            />
+            <div>
+              <strong>
                 Sam <span>Your interviewer</span>
-              </h2>
-              <p className="fine">
-                {voice.status === "connected"
-                  ? "Take your time. I’m following your reasoning."
-                  : "A focused conversation, at your pace."}
-              </p>
-              <button
-                className="primary wide"
-                onClick={startVoice}
-                disabled={
-                  !question ||
-                  starting ||
-                  loading ||
-                  ending ||
-                  voice.status === "connected" ||
-                  voice.status === "connecting"
-                }
-              >
-                {starting
+              </strong>
+              <p role="status">
+                {starting || voice.status === "connecting"
                   ? "Connecting…"
                   : voice.status === "connected"
-                    ? "Voice connected"
-                    : "Start voice interview"}
+                    ? voice.isSpeaking
+                      ? "Speaking"
+                      : "Listening"
+                    : "Ready when you are"}
+              </p>
+            </div>
+          </div>
+        </div>
+        <div className="ide-session-controls">
+          {voice.status !== "connected" ? (
+            <button
+              className="primary"
+              onClick={startVoice}
+              disabled={!question || starting || voice.status === "connecting"}
+            >
+              {starting ? "Connecting…" : "Connect Sam"}
+            </button>
+          ) : (
+            <>
+              <button className="secondary" onClick={voice.toggleMute}>
+                {voice.isMuted ? "Unmute mic" : "Mute mic"}
               </button>
-              {voice.status === "connected" && (
-                <button className="secondary wide" onClick={voice.toggleMute}>
-                  {voice.isMuted ? "Unmute microphone" : "Mute microphone"}
-                </button>
-              )}
-              {voice.status === "connected" && (
-                <div className="audio-controls">
-                  <div className="audio-status">
-                    <span>
-                      {voice.isSpeaking
-                        ? "Sam is speaking"
-                        : voice.hasAudio
-                          ? "Speaker connected"
-                          : "Waiting for Sam’s introduction"}
-                    </span>
-                    <span className="audio-meter">
-                      <i
-                        style={{
-                          width: `${Math.min(100, voice.outputLevel * 300)}%`,
-                        }}
-                      />
-                    </span>
-                  </div>
-                  <label htmlFor="sam-volume">
-                    Sam’s volume <span>{Math.round(voice.volume * 100)}%</span>
+              <details className="ide-audio-menu">
+                <summary>Speaker {Math.round(voice.volume * 100)}%</summary>
+                <div className="ide-audio-options">
+                  <label>
+                    Sam’s volume
+                    <input
+                      type="range"
+                      min="0"
+                      max="1"
+                      step="0.05"
+                      value={voice.volume}
+                      onChange={(event) =>
+                        voice.setVolume(Number(event.target.value))
+                      }
+                    />
                   </label>
-                  <input
-                    id="sam-volume"
-                    type="range"
-                    min="0"
-                    max="1"
-                    step="0.05"
-                    value={voice.volume}
-                    onChange={(event) =>
-                      voice.setVolume(Number(event.target.value))
-                    }
-                  />
+                  <label className="ide-share-toggle">
+                    <input
+                      type="checkbox"
+                      checked={observe}
+                      onChange={(event) => setSharing(event.target.checked)}
+                    />{" "}
+                    Share workspace with Sam
+                  </label>
                   <button
-                    className="secondary wide"
+                    className="secondary"
                     onClick={async () => {
                       try {
                         await voice.enableAudio();
-                        setNotice(
-                          "Speaker playback enabled. Check your device volume if you still cannot hear Sam.",
-                        );
+                        setNotice("Speaker playback enabled.");
                       } catch (failure) {
                         setError(
                           failure instanceof Error
@@ -739,105 +707,144 @@ function InterviewSession({
                       }
                     }}
                   >
-                    Enable speaker ↗
+                    Enable speaker
                   </button>
                   <button
-                    className="text-button"
+                    className="secondary"
                     onClick={() =>
                       askSam(
-                        "Please introduce yourself and explain how this interview will work, then invite me to clarify the current question.",
+                        "Repeat your introduction and explain the current task.",
                       )
                     }
                   >
-                    Repeat introduction
+                    Repeat intro
                   </button>
                 </div>
-              )}
-              {!startedAt && (
-                <button
-                  className="text-button"
-                  disabled={!question || loading || starting}
-                  onClick={beginPractice}
-                >
-                  Practice without voice →
-                </button>
-              )}
-              {startedAt && (
-                <button
-                  className="secondary wide"
-                  disabled={starting || ending || loading}
-                  onClick={finish}
-                >
-                  {ending ? "Ending…" : "End & review"}
-                </button>
-              )}
-            </section>
-            <section className="awareness-card">
-              <div className="awareness-title">
-                <i className={voice.status === "connected" ? "online" : ""} />
-                <strong>
-                  {voice.status === "connected"
-                    ? "Sam is in the room"
-                    : "Connect Sam to collaborate"}
-                </strong>
-              </div>
-              <p>
-                When connected, Sam hears you and follows your current code,
-                notes, and test results.
-              </p>
-              <label className="check">
-                <input
-                  type="checkbox"
-                  checked={observe}
-                  onChange={(event) => setSharing(event.target.checked)}
-                />{" "}
-                Automatically share workspace updates
-              </label>
-              <div className="quick-actions">
-                <button
-                  disabled={voice.status !== "connected"}
-                  onClick={() =>
-                    askSam(
-                      "I am stuck. Give me one small hint, then ask a question that helps me think.",
-                    )
-                  }
-                >
-                  Give me a hint
-                </button>
-                <button
-                  disabled={voice.status !== "connected"}
-                  onClick={() =>
-                    askSam(
-                      "Challenge my current approach. Ask one question about an assumption or edge case.",
-                    )
-                  }
-                >
-                  Challenge my approach
-                </button>
-              </div>
-            </section>
-            <section className="card session-flow">
-              <p className="eyebrow">YOUR INTERVIEW FLOW</p>
-              {steps.map((s, i) => (
-                <button
-                  key={s}
+              </details>
+            </>
+          )}
+          <details className="session-menu">
+            <summary>More ···</summary>
+            <div
+              className="session-menu-content"
+              onClick={(event) => {
+                const button = (event.target as HTMLElement).closest("button");
+                if (button?.parentElement === event.currentTarget) {
+                  event.currentTarget
+                    .closest("details")
+                    ?.removeAttribute("open");
+                }
+              }}
+            >
+              {isCodingInterview(config.interviewType) &&
+                workTab !== "code" && (
+                  <button
+                    className="secondary"
+                    onClick={() => setWorkTab("code")}
+                  >
+                    Back to editor
+                  </button>
+                )}
+              <button
+                className="secondary"
+                onClick={() => setWorkTab("approach")}
+              >
+                My approach
+              </button>
+              <button
+                className="secondary"
+                onClick={() => setWorkTab("conversation")}
+              >
+                Sam chat
+              </button>
+              <button
+                className="secondary"
+                onClick={pick}
+                disabled={loading || starting}
+              >
+                {loading ? "Selecting…" : question ? "Next task" : "Pick task"}
+              </button>
+              <label className="session-phase">
+                Interview phase
+                <select
+                  value={phase}
                   disabled={!startedAt}
-                  className={phase === i ? "current" : ""}
-                  onClick={() => {
-                    setPhase(i);
+                  onChange={(event) => {
+                    const next = Number(event.target.value);
+                    setPhase(next);
                     if (voice.status === "connected")
                       askSam(
-                        `I am moving to the ${s} phase. Guide that phase with one concise follow-up.`,
+                        `I am moving to the ${steps[next]} phase. Guide that phase with one concise follow-up.`,
                       );
                   }}
                 >
-                  <span>{i < phase ? "✓" : `0${i + 1}`}</span>
-                  {s}
-                </button>
-              ))}
-            </section>
-          </aside>
-        )}
+                  {steps.map((step, index) => (
+                    <option key={step} value={index}>
+                      {step}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <button
+                className="secondary"
+                disabled={voice.status !== "connected"}
+                onClick={() =>
+                  askSam(
+                    "Give me one small hint, then ask a question that helps me think.",
+                  )
+                }
+              >
+                Get a hint
+              </button>
+              <button
+                className="secondary"
+                disabled={voice.status !== "connected"}
+                onClick={() =>
+                  askSam(
+                    "Challenge my current approach. Ask one question about an assumption or edge case.",
+                  )
+                }
+              >
+                Challenge my approach
+              </button>
+              <details className="question-source-menu">
+                <summary>Question source</summary>
+                <p className="fine">{total} questions available in this bank</p>
+                <CustomQuestionBank
+                  count={customBank.length}
+                  active={source === "custom"}
+                  onLoad={loadCustomBank}
+                  onCurated={() => {
+                    setSource("curated");
+                    setNotice(
+                      "Curated bank selected. Pick your next question.",
+                    );
+                  }}
+                />
+              </details>
+            </div>
+          </details>
+          {!startedAt ? (
+            <button
+              className="secondary"
+              disabled={!question}
+              onClick={beginPractice}
+            >
+              Start timer
+            </button>
+          ) : (
+            <button
+              className="secondary"
+              disabled={ending || starting}
+              onClick={finish}
+            >
+              {ending ? "Ending…" : "End & review"}
+            </button>
+          )}
+        </div>
+      </div>
+
+      <div className="room-grid">
         <section
           className="workspace"
           ref={workspaceElement}
@@ -847,145 +854,6 @@ function InterviewSession({
               : undefined
           }
         >
-          {aiMode && (
-            <div className="ide-toolbar">
-              <div className="ide-session">
-                <span className="ide-status-dot" />
-                <strong>AI-assisted workspace</strong>
-                <span>
-                  Sam ·{" "}
-                  {voice.status === "connected"
-                    ? voice.isSpeaking
-                      ? "speaking"
-                      : "listening"
-                    : "offline"}
-                </span>
-              </div>
-              <div className="ide-session-controls">
-                {voice.status !== "connected" ? (
-                  <button
-                    className="primary"
-                    onClick={startVoice}
-                    disabled={
-                      !question || starting || voice.status === "connecting"
-                    }
-                  >
-                    {starting ? "Connecting…" : "Connect Sam"}
-                  </button>
-                ) : (
-                  <>
-                    <button className="secondary" onClick={voice.toggleMute}>
-                      {voice.isMuted ? "Unmute mic" : "Mute mic"}
-                    </button>
-                    <details className="ide-audio-menu">
-                      <summary>
-                        Speaker {Math.round(voice.volume * 100)}%
-                      </summary>
-                      <div className="ide-audio-options">
-                        <label>
-                          Sam’s volume
-                          <input
-                            type="range"
-                            min="0"
-                            max="1"
-                            step="0.05"
-                            value={voice.volume}
-                            onChange={(event) =>
-                              voice.setVolume(Number(event.target.value))
-                            }
-                          />
-                        </label>
-                        <label className="ide-share-toggle">
-                          <input
-                            type="checkbox"
-                            checked={observe}
-                            onChange={(event) =>
-                              setSharing(event.target.checked)
-                            }
-                          />{" "}
-                          Share workspace with Sam
-                        </label>
-                        <button
-                          className="secondary"
-                          onClick={async () => {
-                            try {
-                              await voice.enableAudio();
-                              setNotice("Speaker playback enabled.");
-                            } catch (failure) {
-                              setError(
-                                failure instanceof Error
-                                  ? failure.message
-                                  : "Could not enable audio.",
-                              );
-                            }
-                          }}
-                        >
-                          Enable speaker
-                        </button>
-                        <button
-                          className="secondary"
-                          onClick={() =>
-                            askSam(
-                              "Repeat your introduction and explain the current task.",
-                            )
-                          }
-                        >
-                          Repeat intro
-                        </button>
-                      </div>
-                    </details>
-                  </>
-                )}
-                <button
-                  className="secondary"
-                  onClick={() =>
-                    setWorkTab(workTab === "approach" ? "code" : "approach")
-                  }
-                >
-                  My approach
-                </button>
-                <button
-                  className="secondary"
-                  onClick={() =>
-                    setWorkTab(
-                      workTab === "conversation" ? "code" : "conversation",
-                    )
-                  }
-                >
-                  Sam chat
-                </button>
-                <button
-                  className="secondary"
-                  onClick={pick}
-                  disabled={loading || starting}
-                >
-                  {loading
-                    ? "Selecting…"
-                    : question
-                      ? "Next task"
-                      : "Pick task"}
-                </button>
-                {!startedAt ? (
-                  <button
-                    className="secondary"
-                    disabled={!question}
-                    onClick={beginPractice}
-                  >
-                    Start timer
-                  </button>
-                ) : (
-                  <button
-                    className="secondary"
-                    disabled={ending || starting}
-                    onClick={finish}
-                  >
-                    {ending ? "Ending…" : "End & review"}
-                  </button>
-                )}
-              </div>
-            </div>
-          )}
-
           <nav className="work-tabs" aria-label="Workspace view">
             {(
               [
@@ -1122,9 +990,16 @@ function InterviewSession({
                 <span>↗</span>
                 <h2>A fresh challenge awaits.</h2>
                 <p>
-                  Pick a random question from your selected topics. Or paste a
-                  question bank above to practice your own prompts.
+                  Pick a question from your selected topics, or add your own
+                  under More → Question source.
                 </p>
+                <button
+                  className="primary"
+                  onClick={pick}
+                  disabled={loading || starting || ending}
+                >
+                  {loading ? "Selecting…" : "Pick a question"}
+                </button>
               </div>
             )}
           </details>
@@ -1142,7 +1017,7 @@ function InterviewSession({
                   onRun={recordRun}
                   onAsk={askSam}
                   voiceConnected={voice.status === "connected"}
-                  compactTests={aiMode}
+                  compactTests
                 />
               )}
               {aiMode && (

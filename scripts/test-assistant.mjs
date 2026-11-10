@@ -373,7 +373,7 @@ test("IDE resizing preserves the majority of desktop space for code", async () =
     pathToFileURL(join(directory, "ide-layout.mjs"))
   );
   assert.equal(clampPartnerWidth(100, 1200), 260);
-  assert.equal(clampPartnerWidth(700, 1400), 520);
-  assert.equal(clampPartnerWidth(500, 900), 378);
-  assert.equal(clampPartnerWidth(400, 700), 294);
+  assert.equal(clampPartnerWidth(700, 1400), 448);
+  assert.equal(clampPartnerWidth(500, 900), 288);
+  assert.equal(clampPartnerWidth(400, 700), 260);
 });
