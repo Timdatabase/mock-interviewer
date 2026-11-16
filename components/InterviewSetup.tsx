@@ -13,7 +13,8 @@ const formats = [
   {
     value: "technical",
     label: "Coding",
-    icon: "{ }",
+    icon: "⌘",
+    detail: "Think. Code. Explain.",
     description:
       "Explain your approach, write a solution, and put it to the test.",
   },
@@ -21,6 +22,7 @@ const formats = [
     value: "ai-assisted",
     label: "AI-assisted",
     icon: "✦",
+    detail: "Build with an AI partner.",
     description:
       "Build a practical coding task with an AI partner. Review its code, run tests, and explain your decisions.",
   },
@@ -28,6 +30,7 @@ const formats = [
     value: "behavioral",
     label: "Behavioral",
     icon: "◌",
+    detail: "Find your story.",
     description:
       "Make your experience a clear story, with thoughtful follow-up questions.",
   },
@@ -35,6 +38,7 @@ const formats = [
     value: "system-design",
     label: "System design",
     icon: "⊞",
+    detail: "See the bigger picture.",
     description:
       "Work through requirements, architecture, and the tradeoffs that matter.",
   },
@@ -51,31 +55,21 @@ export default function InterviewSetup() {
           <SignalLogo />
         </Link>
         <span className="workspace-label">
-          <i /> Your interview practice space
+          <i /> Your personal interview studio
         </span>
       </header>
       <section className="welcome-grid">
         <div className="welcome-story">
           <div className="welcome-kicker">
-            <span /> A little practice goes a long way
+            <span /> YOUR NEXT CHAPTER STARTS HERE
           </div>
           <h1>
-            Walk into your
-            <br />
-            next interview
-            <br />
-            <em className="rotating-heading">
-              <span className="sr-only">ready.</span>
-              <span className="rotating-words" aria-hidden="true">
-                <span>ready.</span>
-                <span>confident.</span>
-                <span>yourself.</span>
-              </span>
-            </em>
+            Great interviews.<br />
+            Start with a<br />
+            <em>little signal.</em>
           </h1>
           <p className="welcome-description">
-            A focused interviewer. A real coding workspace. Get comfortable
-            explaining your ideas and thinking on your feet.
+            A space to think out loud, find your flow, and build confidence. Real conversation. Real code. Your next step forward.
           </p>
           <div className="welcome-capabilities">
             <span>
@@ -99,13 +93,16 @@ export default function InterviewSetup() {
           <input type="hidden" name="interviewType" value={type} />
           <input type="hidden" name="tags" value={tags.join(",")} />
           <div className="form-heading">
-            <span className="eyebrow">LET’S GET YOU READY</span>
+            <span className="eyebrow">THE PRACTICE STUDIO</span>
             <span className="session-chip">
               <i /> New session
             </span>
           </div>
-          <h2>Make this session yours.</h2>
-          <p className="form-intro">A few details, then you’re in the room.</p>
+          <h2>Find your focus.</h2>
+          <p className="form-intro">One focused session. A little more confidence.</p>
+          <div className="setup-journey" aria-label="Session setup steps">
+            <span className="active"><b>01</b> Choose a focus</span><i /><span><b>02</b> Make it yours</span><i /><span><b>03</b> Step inside</span>
+          </div>
           <fieldset className="format-fieldset">
             <legend>What are we practicing?</legend>
             <div className="format-options">
@@ -123,7 +120,8 @@ export default function InterviewSetup() {
                   <span className="format-icon" aria-hidden="true">
                     {format.icon}
                   </span>
-                  {format.label}
+                  <span className="format-copy"><strong>{format.label}</strong><small>{format.detail}</small></span>
+                  <span className="format-check" aria-hidden="true">{type === format.value ? "✓" : "↗"}</span>
                 </button>
               ))}
             </div>
@@ -266,7 +264,7 @@ export default function InterviewSetup() {
             </small>
           </div>
           <button type="submit" className="primary wide enter-room">
-            <span>Enter the interview room</span>
+            <span>Let’s find your flow</span>
             <span className="button-arrow" aria-hidden="true">
               ↗
             </span>
