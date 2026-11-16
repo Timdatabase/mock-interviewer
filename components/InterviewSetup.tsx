@@ -64,12 +64,14 @@ export default function InterviewSetup() {
             <span /> YOUR NEXT CHAPTER STARTS HERE
           </div>
           <h1>
-            Great interviews.<br />
+            Great interviews.
+            <br />
             Start with a<br />
             <em>little signal.</em>
           </h1>
           <p className="welcome-description">
-            A space to think out loud, find your flow, and build confidence. Real conversation. Real code. Your next step forward.
+            A space to think out loud, find your flow, and build confidence.
+            Real conversation. Real code. Your next step forward.
           </p>
           <div className="welcome-capabilities">
             <span>
@@ -99,9 +101,21 @@ export default function InterviewSetup() {
             </span>
           </div>
           <h2>Find your focus.</h2>
-          <p className="form-intro">One focused session. A little more confidence.</p>
+          <p className="form-intro">
+            One focused session. A little more confidence.
+          </p>
           <div className="setup-journey" aria-label="Session setup steps">
-            <span className="active"><b>01</b> Choose a focus</span><i /><span><b>02</b> Make it yours</span><i /><span><b>03</b> Step inside</span>
+            <span className="active">
+              <b>01</b> Choose a focus
+            </span>
+            <i />
+            <span>
+              <b>02</b> Make it yours
+            </span>
+            <i />
+            <span>
+              <b>03</b> Step inside
+            </span>
           </div>
           <fieldset className="format-fieldset">
             <legend>What are we practicing?</legend>
@@ -120,8 +134,13 @@ export default function InterviewSetup() {
                   <span className="format-icon" aria-hidden="true">
                     {format.icon}
                   </span>
-                  <span className="format-copy"><strong>{format.label}</strong><small>{format.detail}</small></span>
-                  <span className="format-check" aria-hidden="true">{type === format.value ? "✓" : "↗"}</span>
+                  <span className="format-copy">
+                    <strong>{format.label}</strong>
+                    <small>{format.detail}</small>
+                  </span>
+                  <span className="format-check" aria-hidden="true">
+                    {type === format.value ? "✓" : "↗"}
+                  </span>
                 </button>
               ))}
             </div>

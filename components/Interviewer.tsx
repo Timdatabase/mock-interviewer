@@ -412,7 +412,7 @@ function InterviewSession({
   const evidence = voice.transcript.filter((m) => m.role === "user");
   if (review)
     return (
-      <main className="shell">
+      <main className="shell review-page">
         <header className="brand">
           <Link href="/" aria-label="Signal home">
             <SignalLogo />
@@ -423,11 +423,35 @@ function InterviewSession({
           <p className="eyebrow">THE WORK ADDS UP</p>
           <h1>Keep the signal.</h1>
           <p className="intro">
-            You practiced {seen.length} question{seen.length !== 1 ? "s" : ""}{" "}
-            over {Math.floor(elapsed / 60)} minutes. Here’s the evidence to
-            reflect on.
+            You practiced {answers.length + (question ? 1 : 0)} question
+            {answers.length + (question ? 1 : 0) !== 1 ? "s" : ""} over{" "}
+            {Math.floor(elapsed / 60)} minutes. Here’s the evidence to reflect
+            on.
           </p>
         </section>
+        <div className="review-highlights" aria-label="Session highlights">
+          <div>
+            <span>TIME INVESTED</span>
+            <strong>
+              {Math.floor(elapsed / 60)}
+              <small> min</small>
+            </strong>
+          </div>
+          <div>
+            <span>QUESTIONS EXPLORED</span>
+            <strong>
+              {answers.length + (question ? 1 : 0)}
+              <small> prompts</small>
+            </strong>
+          </div>
+          <div>
+            <span>IDEAS SHARED</span>
+            <strong>
+              {evidence.length}
+              <small> contributions</small>
+            </strong>
+          </div>
+        </div>
         <div className="review-grid">
           <section className="card">
             <h2>Your session</h2>
@@ -628,6 +652,13 @@ function InterviewSession({
         <div className="ide-session">
           <div className="sam-presence">
             <Avatar
+              level={
+                voice.isSpeaking
+                  ? voice.outputLevel
+                  : voice.isMuted
+                    ? 0
+                    : voice.inputLevel
+              }
               state={
                 starting || voice.status === "connecting"
                   ? "connecting"
@@ -651,6 +682,15 @@ function InterviewSession({
                       : "Listening"
                     : "Ready when you are"}
               </p>
+              <span className="presence-context">
+                {voice.status === "connected"
+                  ? voice.isMuted
+                    ? "Microphone muted · unmute when you’re ready"
+                    : voice.isSpeaking
+                      ? "Take your time. Your next idea is worth hearing."
+                      : "The floor is yours. Think out loud."
+                  : "Your space to think. Sam is ready to listen."}
+              </span>
             </div>
           </div>
         </div>
@@ -665,7 +705,11 @@ function InterviewSession({
             </button>
           ) : (
             <>
-              <button className="secondary" onClick={voice.toggleMute}>
+              <button
+                className="secondary"
+                onClick={voice.toggleMute}
+                aria-pressed={voice.isMuted}
+              >
                 {voice.isMuted ? "Unmute mic" : "Mute mic"}
               </button>
               <details className="ide-audio-menu">
@@ -844,6 +888,35 @@ function InterviewSession({
         </div>
       </div>
 
+      <nav className="interview-progress" aria-label="Interview phases">
+        {steps.map((step, index) => (
+          <button
+            key={step}
+            type="button"
+            disabled={!startedAt}
+            aria-current={phase === index ? "step" : undefined}
+            onClick={() => {
+              setPhase(index);
+              if (voice.status === "connected")
+                voice.sendMessage(
+                  `I am moving to the ${step} phase. Guide that phase with one concise follow-up.`,
+                );
+            }}
+          >
+            <span>{index < phase ? "✓" : `0${index + 1}`}</span>
+            {step}
+            <i />
+          </button>
+        ))}
+      </nav>
+      {loading && (
+        <div className="question-loading" role="status">
+          <span />
+          <span />
+          <span />
+          <p>Finding your next challenge…</p>
+        </div>
+      )}
       <div className="room-grid">
         <section
           className="workspace"
@@ -885,7 +958,8 @@ function InterviewSession({
               ))}
           </nav>
           <details
-            className="card problem"
+            className={`card problem ${loading ? "is-loading" : ""}`}
+            aria-busy={loading}
             open={aiMode ? taskExpanded : true}
             onToggle={(event) => {
               if (aiMode) setTaskExpanded(event.currentTarget.open);
@@ -940,7 +1014,9 @@ function InterviewSession({
             </div>
             {question ? (
               <>
-                <h2>{question.title}</h2>
+                <h2 key={question.id} className="question-title-reveal">
+                  {question.title}
+                </h2>
                 {isCodingInterview(config.interviewType) && (
                   <span className="difficulty">
                     {question.id.startsWith("custom-")
