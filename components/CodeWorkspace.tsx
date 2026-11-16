@@ -1,6 +1,7 @@
 "use client";
 import dynamic from "next/dynamic";
-import { useEffect, useRef, useState } from "react";
+import PaneDivider from "./PaneDivider";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import type { PublicQuestion } from "@/lib/interview/questions";
 import { startRun } from "@/lib/runner/client";
 import { parseTests } from "@/lib/runner/tests";
@@ -40,7 +41,9 @@ export default function CodeWorkspace({
   compactTests?: boolean;
 }) {
   const [consoleOpen, setConsoleOpen] = useState(!compactTests);
-  const [tab, setTab] = useState<"tests" | "output">("tests");
+  const [tab, setTab] = useState<"tests" | "output" | "errors">("tests");
+  const [consoleSize, setConsoleSize] = useState(28);
+  const panelElement = useRef<HTMLElement>(null);
   const [tests, setTests] = useState(
     JSON.stringify(question.testCases, null, 2),
   );
@@ -75,8 +78,10 @@ export default function CodeWorkspace({
       if (!mounted.current) return;
       const record = { questionId: question.id, language, code, result };
       setRun(record);
+      if (result.error) setTab("errors");
       onRun(record);
     } catch (failure) {
+      setTab("errors");
       setError(
         failure instanceof Error ? failure.message : "Unable to run code.",
       );
@@ -89,6 +94,8 @@ export default function CodeWorkspace({
   return (
     <section
       className={`coding-panel ${consoleOpen ? "" : "console-collapsed"}`}
+      ref={panelElement}
+      style={{ "--console-size": `${consoleSize}%` } as CSSProperties}
     >
       <div className="code-titlebar">
         <div className="file-tab">
@@ -117,20 +124,7 @@ export default function CodeWorkspace({
             ))}
           </select>
         </label>
-      </div>
-      <CodeEditor
-        language={language}
-        code={code}
-        onChange={onChange}
-        onCursor={onCursor}
-      />
-      <div className="execution-toolbar">
-        <span>
-          Implement <code>solve(...)</code> ·{" "}
-          {language === "python" ? "2.5s" : "2s"} execution limit · isolated
-          runtime
-        </span>
-        <div>
+        <div className="editor-actions">
           {running ? (
             <button
               className="stop-button"
@@ -140,7 +134,7 @@ export default function CodeWorkspace({
             </button>
           ) : (
             <button className="run-button" onClick={executeCode}>
-              ▶ Run tests <kbd> </kbd>
+              ▶ Run tests
             </button>
           )}
           <button
@@ -156,6 +150,36 @@ export default function CodeWorkspace({
           </button>
         </div>
       </div>
+      <CodeEditor
+        language={language}
+        code={code}
+        onChange={onChange}
+        onCursor={onCursor}
+      />
+      {consoleOpen && (
+        <PaneDivider
+          orientation="horizontal"
+          label="Resize tests and output"
+          value={consoleSize}
+          min={15}
+          max={45}
+          onDrag={(_, y) => {
+            const bounds = panelElement.current?.getBoundingClientRect();
+            if (bounds)
+              setConsoleSize(
+                Math.max(
+                  15,
+                  Math.min(45, ((bounds.bottom - y) / bounds.height) * 100),
+                ),
+              );
+          }}
+          onStep={(direction) =>
+            setConsoleSize((size) =>
+              Math.max(15, Math.min(45, size - direction * 3)),
+            )
+          }
+        />
+      )}
       <div className="output-panel">
         <div className="output-tabs">
           <button
@@ -188,6 +212,20 @@ export default function CodeWorkspace({
             )}
           </button>
           <button
+            aria-pressed={tab === "errors"}
+            onClick={() => {
+              setTab("errors");
+              setConsoleOpen(true);
+            }}
+          >
+            Errors{" "}
+            <span>
+              {(error ? 1 : 0) +
+                (run?.result.error ? 1 : 0) +
+                (run?.result.cases.filter((test) => test.error).length ?? 0)}
+            </span>
+          </button>
+          <button
             type="button"
             className="console-toggle"
             aria-label={
@@ -204,11 +242,6 @@ export default function CodeWorkspace({
             Visible tests only · not a complete correctness proof
           </span>
         </div>
-        {error && (
-          <p className="alert" role="alert">
-            {error}
-          </p>
-        )}
         {tab === "tests" ? (
           <div className="test-editor">
             <label htmlFor="test-input">Edit or add tests · JSON array</label>
@@ -226,6 +259,35 @@ export default function CodeWorkspace({
               Values in <code>args</code> become separate arguments to{" "}
               <code>solve</code>.
             </p>
+          </div>
+        ) : tab === "errors" ? (
+          <div
+            className="run-output error-output"
+            role="status"
+            aria-live="polite"
+          >
+            {error && <pre className="failure-text">{error}</pre>}
+            {run?.result.error && (
+              <pre className="failure-text">{run.result.error}</pre>
+            )}
+            {run?.result.cases
+              .filter((test) => test.error)
+              .map((test, index) => (
+                <div key={index}>
+                  <h3>{test.name}</h3>
+                  <pre className="failure-text">{test.error}</pre>
+                </div>
+              ))}
+            {!error &&
+              !run?.result.error &&
+              !run?.result.cases.some((test) => test.error) && (
+                <p className="run-empty">
+                  No runtime errors
+                  {run
+                    ? " in the latest run."
+                    : " yet. Run your code to check."}
+                </p>
+              )}
           </div>
         ) : (
           <div className="run-output" role="status" aria-live="polite">

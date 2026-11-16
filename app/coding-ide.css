@@ -1,0 +1,834 @@
+/* Coding interviews have one viewport grid; these rules own their pane geometry. */
+:root .room.coding-ide.shell {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  height: 100dvh;
+  max-height: 100dvh;
+  padding: 0;
+  gap: 0;
+  overflow: hidden;
+}
+:root .coding-ide .interview-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-height: 58px;
+  padding: 6px 16px;
+  border-bottom: 1px solid #ffffff13;
+  background: #11161e;
+  min-width: 0;
+  z-index: 30;
+}
+:root .coding-ide .interview-header .brand {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 14px;
+  padding: 0;
+  border: 0;
+  min-height: 0;
+}
+:root .coding-ide .brand .signal-logo {
+  font-size: 20px;
+  gap: 7px;
+}
+:root .coding-ide .brand .signal-symbol {
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+}
+:root .coding-ide .brand .signal-symbol svg {
+  width: 20px;
+  height: 20px;
+}
+:root .coding-ide .brand > span {
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 10px;
+  letter-spacing: 0;
+  text-transform: capitalize;
+}
+:root .coding-ide .timer {
+  padding: 5px 7px;
+  font-size: 12px;
+  min-width: 52px;
+  background: #ffffff03;
+}
+:root .coding-ide .interview-progress {
+  flex: 0 0 auto;
+  gap: 4px;
+  padding: 0;
+  overflow: visible;
+}
+:root .coding-ide .interview-progress button {
+  padding: 3px;
+  min-width: 0;
+  min-height: 0;
+  gap: 0;
+  flex-direction: row;
+  border: 0;
+  background: transparent;
+}
+:root .coding-ide .interview-progress button > span:first-child {
+  width: 21px;
+  height: 21px;
+  font-size: 8px;
+}
+:root .coding-ide .interview-progress :is(.phase-name, i) {
+  display: none;
+}
+:root .coding-ide .interview-header .ide-toolbar {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 14px;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  flex-wrap: nowrap;
+  animation: none;
+}
+:root .coding-ide .sam-presence {
+  gap: 4px;
+}
+:root .coding-ide .sam-presence .ai-presence {
+  width: 38px;
+  height: 38px;
+  min-height: 38px;
+  flex: 0 0 38px;
+}
+:root .coding-ide .sam-presence .android-head {
+  width: 65%;
+}
+:root
+  .coding-ide
+  .sam-presence
+  :is(.presence-context, .orb-wave, strong > span) {
+  display: none;
+}
+:root .coding-ide .sam-presence strong {
+  font-size: 11px;
+  letter-spacing: 0;
+}
+:root .coding-ide .sam-presence p {
+  font-size: 9px;
+  margin: 2px 0 0;
+  white-space: nowrap;
+}
+:root .coding-ide .ide-session-controls {
+  gap: 6px;
+  flex-wrap: nowrap;
+  width: auto;
+}
+:root .coding-ide .ide-session-controls > button,
+:root .coding-ide .session-menu > summary,
+:root .coding-ide .ide-audio-menu > summary {
+  min-height: 30px;
+  padding: 6px 9px;
+  border-radius: 6px;
+  font-size: 10px;
+  flex: none;
+}
+:root .coding-ide .workspace-actions {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  border-left: 1px solid #ffffff12;
+  padding-left: 10px;
+}
+:root .coding-ide .workspace-actions button {
+  background: transparent;
+  color: #98a9bc;
+  border: 1px solid transparent;
+  padding: 7px;
+  border-radius: 6px;
+  font-size: 10px;
+  white-space: nowrap;
+}
+:root .coding-ide .workspace-actions button:hover {
+  background: #ffffff07;
+  color: #e0e9f2;
+}
+:root .coding-ide .workspace-actions button[aria-pressed="true"] {
+  color: #b5f4d0;
+  background: #b5f4d008;
+  border-color: #b5f4d020;
+}
+:root .coding-ide > .room-grid {
+  display: block;
+  width: 100%;
+  min-height: 0;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+}
+:root .coding-ide .room-grid > .workspace {
+  display: grid;
+  grid-template-columns: minmax(240px, var(--problem-width, 30%)) 6px minmax(
+      0,
+      1fr
+    );
+  grid-template-rows: minmax(0, 1fr);
+  position: relative;
+  height: 100%;
+  min-height: 0;
+  width: 100%;
+  gap: 0;
+  padding: 0;
+  overflow: hidden;
+}
+:root .coding-ide .workspace > .work-tabs,
+:root .coding-ide .workspace > .ide-splitter,
+:root .coding-ide > footer {
+  display: none;
+}
+:root .coding-ide .workspace > .problem {
+  display: block;
+  grid-column: 1;
+  grid-row: 1;
+  position: static;
+  width: 100%;
+  min-width: 0;
+  height: 100%;
+  max-height: none;
+  overflow: auto;
+  overscroll-behavior: contain;
+  border: 0;
+  border-radius: 0;
+  background: #121820;
+  box-shadow: none;
+  padding: 24px;
+  margin: 0;
+}
+:root .coding-ide .problem > .section-top {
+  display: flex;
+}
+:root .coding-ide .problem > h2 {
+  display: block;
+  font-size: 26px;
+  margin: 24px 0 14px;
+}
+:root .coding-ide .problem > .ide-task-summary {
+  display: none;
+}
+:root .coding-ide .problem .problem-text {
+  font-size: 13px;
+  line-height: 1.85;
+}
+:root .coding-ide .problem .section-top .secondary {
+  font-size: 10px;
+  padding: 6px 9px;
+}
+:root .coding-ide .workspace > .coding-panel {
+  display: flex;
+  flex-direction: column;
+  grid-column: 3;
+  grid-row: 1;
+  min-width: 0;
+  width: 100%;
+  min-height: 0;
+  height: 100%;
+  border: 0;
+  border-radius: 0;
+  margin: 0;
+  overflow: hidden;
+  box-shadow: none;
+  background: #151a23;
+}
+:root .coding-ide .coding-panel .code-titlebar {
+  display: flex;
+  align-items: center;
+  flex: 0 0 44px;
+  min-height: 44px;
+  padding: 0 12px 0 0;
+  gap: 12px;
+  background: #141a23;
+  border-bottom: 1px solid #ffffff10;
+}
+:root .coding-ide .coding-panel .file-tab {
+  min-height: 44px;
+  padding: 10px 14px;
+  font-size: 11px;
+  white-space: nowrap;
+}
+:root .coding-ide .language-select {
+  margin-left: auto;
+}
+:root .coding-ide .language-select select {
+  margin: 0;
+  min-height: 28px;
+  padding: 4px 24px 4px 8px;
+  font-size: 10px;
+}
+:root .coding-ide .editor-actions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+:root .coding-ide .editor-actions button {
+  font-size: 10px;
+  min-height: 29px;
+  padding: 6px 10px;
+  border-radius: 6px;
+}
+:root .coding-ide .editor-actions .discuss-button {
+  color: #b9cdc9;
+  background: #ffffff04;
+  border: 1px solid #ffffff13;
+}
+:root .coding-ide .coding-panel > .solution-editor {
+  flex: 1 1 0;
+  min-height: 280px;
+  height: 0;
+  overflow: hidden;
+  width: 100%;
+}
+:root .coding-ide .solution-editor .cm-editor {
+  height: 100%;
+  min-height: 0;
+}
+:root .coding-ide .solution-editor .cm-scroller {
+  height: 100%;
+  overflow: auto;
+  font-size: 13px;
+  line-height: 1.8;
+  overscroll-behavior: contain;
+}
+:root .coding-ide .solution-editor .cm-content {
+  padding: 20px 0;
+}
+:root .coding-ide .coding-panel .editor-loading {
+  flex: 1;
+  min-height: 280px;
+  display: grid;
+  place-items: center;
+  color: #93a5b8;
+  font-size: 12px;
+}
+:root .coding-ide .coding-panel > .output-panel {
+  display: flex;
+  flex-direction: column;
+  flex: 0 0 var(--console-size, 28%);
+  min-height: 100px;
+  max-height: min(45%, calc(100% - 330px));
+  overflow: hidden;
+  background: #10161e;
+  border-top: 1px solid #ffffff12;
+}
+:root .coding-ide .coding-panel.console-collapsed > .output-panel {
+  height: 36px;
+  flex-basis: 36px !important;
+  min-height: 36px !important;
+  max-height: 36px !important;
+}
+:root .coding-ide .output-tabs {
+  flex: 0 0 36px;
+  min-height: 36px;
+  gap: 18px;
+  padding: 0 14px;
+  border-bottom: 1px solid #ffffff0b;
+}
+:root .coding-ide .output-tabs button {
+  min-height: 36px;
+  padding: 8px 0;
+  font-size: 10px;
+  white-space: nowrap;
+}
+:root .coding-ide .output-help {
+  display: none;
+}
+:root .coding-ide .output-tabs .console-toggle {
+  margin-left: auto;
+}
+:root .coding-ide :is(.run-output, .test-editor) {
+  flex: 1;
+  min-height: 0;
+  max-height: none;
+  overflow: auto;
+  padding: 14px 18px;
+  overscroll-behavior: contain;
+  animation: preview-reveal 0.15s ease-out;
+}
+:root .coding-ide .test-editor textarea {
+  min-height: 100px;
+  font-size: 11px;
+  margin: 8px 0;
+}
+:root .coding-ide .test-result {
+  border-bottom: 1px solid #ffffff0c;
+}
+:root .coding-ide .run-output pre {
+  background: #ffffff03;
+}
+.pane-divider {
+  position: relative;
+  display: grid;
+  place-items: center;
+  background: #0d1219;
+  touch-action: none;
+  user-select: none;
+  z-index: 3;
+}
+.pane-divider.vertical {
+  grid-column: 2;
+  grid-row: 1;
+  cursor: col-resize;
+  border-inline: 1px solid #ffffff07;
+}
+.pane-divider.horizontal {
+  flex: 0 0 6px;
+  cursor: row-resize;
+}
+.pane-divider > span {
+  border-radius: 3px;
+  background: #ffffff20;
+  transition: background 0.15s;
+}
+.pane-divider.vertical > span {
+  width: 2px;
+  height: 32px;
+}
+.pane-divider.horizontal > span {
+  height: 2px;
+  width: 32px;
+}
+.pane-divider:hover > span,
+.pane-divider:focus-visible > span {
+  background: #b5f4d0;
+}
+:root .coding-ide.problem-collapsed .workspace {
+  grid-template-columns: minmax(0, 1fr);
+}
+:root
+  .coding-ide.problem-collapsed
+  .workspace
+  > :is(.problem, .pane-divider.vertical) {
+  display: none;
+}
+:root .coding-ide.problem-collapsed .workspace > .coding-panel {
+  grid-column: 1;
+}
+/* Drawers are opt-in overlays; the editor stays mounted and independently scrollable. */
+:root
+  .coding-ide
+  .workspace
+  > :is(.notes-panel, .transcript, .assistant-panel, .ask-sam) {
+  display: none;
+}
+:root .coding-ide.tab-approach .workspace > .notes-panel,
+:root .coding-ide.tab-conversation .workspace > .transcript,
+:root .coding-ide.tab-assistant .workspace > .assistant-panel {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  grid-column: auto;
+  grid-row: auto;
+  z-index: 15;
+  top: 8px;
+  right: 8px;
+  bottom: 8px;
+  width: min(360px, calc(100% - 32px));
+  height: auto;
+  min-height: 0;
+  max-height: none;
+  padding: 18px;
+  border: 1px solid #ffffff22;
+  border-radius: 12px;
+  background: #171f2a;
+  box-shadow: -12px 0 40px #0004;
+  overflow: auto;
+  animation: preview-reveal 0.18s ease-out;
+}
+:root .coding-ide.tab-conversation .workspace > .transcript {
+  bottom: 72px;
+}
+:root .coding-ide.tab-conversation .workspace > .ask-sam {
+  display: flex;
+  position: absolute;
+  z-index: 16;
+  right: 8px;
+  bottom: 8px;
+  width: min(360px, calc(100% - 32px));
+  height: 56px;
+  margin: 0;
+  padding: 8px;
+  background: #171f2a;
+  border: 1px solid #ffffff22;
+  border-radius: 10px;
+}
+:root .coding-ide .transcript .messages {
+  display: block;
+  min-height: 0;
+  flex: 1;
+  max-height: none;
+  overflow: auto;
+}
+:root .coding-ide .notes-panel label {
+  min-height: 0;
+}
+:root .coding-ide .notes-panel textarea {
+  min-height: 160px;
+}
+:root .coding-ide > :is(.alert, .notice, .question-loading) {
+  position: fixed;
+  z-index: 50;
+  top: 66px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: max-content;
+  max-width: min(560px, calc(100vw - 24px));
+  max-height: 160px;
+  overflow: auto;
+  padding: 12px 38px 12px 16px;
+  margin: 0;
+  border: 1px solid #ffffff25;
+  border-radius: 10px;
+  box-shadow: 0 8px 40px #0005;
+  font-size: 12px;
+  background: #23362f;
+  color: #d5f4e2;
+}
+:root .coding-ide > .alert {
+  background: #38252a;
+  color: #ffd3d0;
+}
+:root .coding-ide > :is(.alert, .notice) > button {
+  position: absolute;
+  right: 8px;
+  top: 8px;
+  background: transparent;
+  border: 0;
+  color: inherit;
+  font-size: 17px;
+}
+:root .coding-ide > .alert + .notice {
+  top: 128px;
+}
+:root .coding-ide.no-question .workspace {
+  grid-template-columns: minmax(0, 1fr);
+}
+:root .coding-ide.no-question .workspace > .problem {
+  grid-column: 1;
+  grid-row: 1;
+}
+:root .coding-ide.no-question .workspace > .pane-divider {
+  display: none;
+}
+:root .discussion-room .interview-header {
+  display: contents;
+}
+@media (max-width: 1180px) {
+  :root .coding-ide .interview-header {
+    gap: 10px;
+    padding-inline: 10px;
+  }
+  :root .coding-ide .brand > span {
+    display: none;
+  }
+  :root .coding-ide .interview-header .ide-toolbar {
+    gap: 8px;
+  }
+  :root .coding-ide .workspace-actions {
+    padding-left: 6px;
+  }
+  :root .coding-ide .editor-actions .discuss-button {
+    display: none;
+  }
+}
+@media (max-width: 850px) {
+  :root .coding-ide .interview-progress {
+    display: none;
+  }
+  :root .coding-ide .brand .signal-logo > span:last-child {
+    display: none;
+  }
+  :root .coding-ide .room-grid > .workspace {
+    grid-template-columns: minmax(210px, var(--problem-width, 30%)) 6px minmax(
+        0,
+        1fr
+      );
+  }
+  :root .coding-ide .workspace > .problem {
+    padding: 18px;
+  }
+}
+@media (max-width: 650px) {
+  :root .coding-ide .interview-header {
+    flex-wrap: wrap;
+    min-height: 80px;
+    gap: 2px 8px;
+    padding: 4px 8px;
+  }
+  :root .coding-ide .interview-header .ide-toolbar {
+    gap: 4px;
+  }
+  :root .coding-ide .workspace-actions {
+    width: 100%;
+    border: 0;
+    padding-left: 0;
+  }
+  :root .coding-ide .workspace-actions button {
+    padding: 5px 9px;
+  }
+  :root .coding-ide .sam-presence .ai-presence {
+    width: 30px;
+    height: 30px;
+    min-height: 30px;
+    flex-basis: 30px;
+  }
+  :root .coding-ide .sam-presence > div:last-child {
+    display: none;
+  }
+  :root .coding-ide .ide-audio-menu > summary {
+    font-size: 0;
+  }
+  :root .coding-ide .ide-audio-menu > summary::after {
+    content: "Audio";
+    font-size: 10px;
+  }
+  :root .coding-ide .room-grid > .workspace {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  :root .coding-ide .workspace > .coding-panel {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  :root .coding-ide .workspace > .pane-divider.vertical {
+    display: none;
+  }
+  :root .coding-ide.mobile-problem-open .workspace > .problem {
+    position: absolute;
+    z-index: 20;
+    inset: 0;
+    width: 100%;
+    background: #121820;
+  }
+  :root .coding-ide:not(.mobile-problem-open) .workspace > .problem {
+    display: none;
+  }
+  :root .coding-ide .coding-panel .file-tab {
+    font-size: 10px;
+    padding-inline: 8px;
+  }
+  :root .coding-ide .code-titlebar {
+    gap: 6px;
+    padding-right: 6px;
+  }
+  :root .coding-ide .coding-panel > .solution-editor {
+    min-height: 180px;
+  }
+  :root .coding-ide .coding-panel > .output-panel {
+    min-height: 90px;
+    max-height: min(45%, calc(100% - 230px));
+  }
+  :root .coding-ide .workspace > .problem .empty {
+    margin: 25px auto;
+  }
+}
+@media (max-height: 540px) {
+  :root .coding-ide .coding-panel > .solution-editor {
+    min-height: 140px;
+  }
+  :root .coding-ide .coding-panel > .output-panel {
+    min-height: 70px;
+    max-height: min(40%, calc(100% - 190px));
+  }
+}
+
+:root .coding-ide .mobile-problem-toggle {
+  display: none;
+}
+@media (max-width: 650px) {
+  :root .coding-ide .desktop-problem-toggle {
+    display: none;
+  }
+  :root .coding-ide .mobile-problem-toggle {
+    display: inline-flex;
+  }
+  :root .coding-ide.mobile-problem-open .workspace > .problem {
+    display: block;
+  }
+  :root .coding-ide.no-question .workspace > .problem {
+    display: block;
+    position: static;
+  }
+}
+:root .coding-ide > .room-grid {
+  display: block;
+  grid-row: 2;
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+  overflow: hidden;
+}
+:root .coding-ide .room-grid > .workspace {
+  display: grid;
+  grid-template-columns: minmax(240px, var(--problem-width, 30%)) 6px minmax(
+      0,
+      1fr
+    );
+  grid-template-rows: minmax(0, 1fr);
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  min-width: 0;
+  gap: 0;
+  overflow: hidden;
+  position: relative;
+}
+:root .coding-ide .workspace > .work-tabs {
+  display: none;
+}
+:root .coding-ide.problem-collapsed .room-grid > .workspace,
+:root .coding-ide.no-question .room-grid > .workspace {
+  grid-template-columns: minmax(0, 1fr);
+}
+:root .coding-ide > .session-notifications {
+  position: fixed;
+  z-index: 50;
+  top: 66px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: grid;
+  gap: 8px;
+  width: min(560px, calc(100vw - 24px));
+  pointer-events: none;
+}
+:root .coding-ide .session-notifications > :is(.alert, .notice) {
+  pointer-events: auto;
+  position: relative;
+  max-height: 160px;
+  overflow: auto;
+  padding: 12px 38px 12px 16px;
+  margin: 0;
+  border: 1px solid #ffffff25;
+  border-radius: 10px;
+  box-shadow: 0 8px 40px #0005;
+  font-size: 12px;
+  background: #23362f;
+  color: #d5f4e2;
+}
+:root .coding-ide .session-notifications > .alert {
+  background: #38252a;
+  color: #ffd3d0;
+}
+:root .coding-ide .session-notifications button {
+  position: absolute;
+  right: 8px;
+  top: 8px;
+  background: transparent;
+  border: 0;
+  color: inherit;
+  font-size: 17px;
+}
+:root .coding-ide > footer {
+  display: none;
+}
+@media (max-width: 850px) and (min-width: 651px) {
+  :root .coding-ide .room-grid > .workspace {
+    grid-template-columns: minmax(210px, var(--problem-width, 30%)) 6px minmax(
+        0,
+        1fr
+      );
+  }
+  :root .coding-ide.problem-collapsed .room-grid > .workspace {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (max-width: 650px) {
+  :root .coding-ide .room-grid > .workspace {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  :root .coding-ide > .session-notifications {
+    top: 90px;
+  }
+}
+:root .coding-ide .interview-progress button {
+  flex: 0 0 24px;
+  width: 24px;
+  min-width: 24px;
+  min-height: 24px;
+  padding: 0;
+  gap: 0;
+  border: 0;
+  background: transparent;
+}
+:root .coding-ide .interview-progress button > span:first-child {
+  width: 22px;
+  height: 22px;
+  font-size: 8px;
+}
+:root .coding-ide .interview-progress button > .phase-name {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+:root .coding-ide .interview-progress button > i {
+  display: none;
+}
+:root .coding-ide .workspace-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+:root .coding-ide .workspace-actions button {
+  background: transparent;
+  color: #98a9bb;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  padding: 7px 9px;
+  min-height: 30px;
+  font-size: 10px;
+  white-space: nowrap;
+}
+:root .coding-ide .workspace-actions button:hover {
+  background: #ffffff07;
+  color: #d9e8e5;
+}
+:root .coding-ide .workspace-actions button[aria-pressed="true"] {
+  color: #b5f4d0;
+  background: #b5f4d008;
+  border-color: #b5f4d01c;
+}
+:root .coding-ide .workspace-actions .mobile-problem-toggle {
+  display: none;
+}
+:root .coding-ide .workspace > .assistant-panel {
+  border-left: 1px solid #ffffff22;
+}
+:root .coding-ide .problem > h2 {
+  scroll-margin-top: 16px;
+}
+:root .coding-ide.no-question .workspace > .problem {
+  display: block;
+  position: static;
+}
+:root .discussion-room .session-notifications:empty {
+  display: none;
+}
+@media (max-width: 650px) {
+  :root .coding-ide .workspace-actions .desktop-problem-toggle {
+    display: none;
+  }
+  :root .coding-ide .workspace-actions .mobile-problem-toggle {
+    display: inline-flex;
+  }
+  :root .coding-ide .workspace-actions button {
+    padding: 4px 9px;
+    min-height: 26px;
+  }
+}

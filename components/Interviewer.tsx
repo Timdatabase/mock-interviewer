@@ -1,8 +1,13 @@
 "use client";
 import Link from "next/link";
 import Form from "next/form";
-import { useEffect, useRef, useState, type CSSProperties } from "react";
-import { clampPartnerWidth } from "@/lib/interview/ide-layout";
+import {
+  useEffect,
+  useEffectEvent,
+  useRef,
+  useState,
+  type CSSProperties,
+} from "react";
 import { canApplyProposal } from "@/lib/assistant/proposals";
 import { isCodingInterview, type SessionConfig } from "@/lib/interview/config";
 import CodingPartner from "./CodingPartner";
@@ -16,6 +21,7 @@ import { interviewerSystemPrompt } from "@/lib/interview/prompts";
 import { useElevenLabsProvider } from "@/lib/voice/elevenlabs";
 import SignalLogo from "./SignalLogo";
 import Avatar from "./Avatar";
+import PaneDivider from "./PaneDivider";
 import CodeWorkspace, { type RunRecord } from "./CodeWorkspace";
 import CustomQuestionBank from "./CustomQuestionBank";
 import { parseCustomQuestions } from "@/lib/interview/custom";
@@ -81,19 +87,15 @@ function InterviewSession({
     language: "javascript" as CodeLanguage,
     questionId: initialQuestion?.id,
   });
-  const [taskExpanded, setTaskExpanded] = useState(!initialQuestion);
-  const [partnerWidth, setPartnerWidth] = useState(300);
+  const [problemWidth, setProblemWidth] = useState(30);
+  const [problemCollapsed, setProblemCollapsed] = useState(false);
+  const [dismissedVoiceError, setDismissedVoiceError] = useState("");
+  const [timeNoticeDismissed, setTimeNoticeDismissed] = useState(false);
+  const coding = isCodingInterview(config.interviewType);
+  const bannerError =
+    error || (voice.error !== dismissedVoiceError ? voice.error : "");
+  const [mobileProblemOpen, setMobileProblemOpen] = useState(false);
   const workspaceElement = useRef<HTMLElement>(null);
-  useEffect(() => {
-    if (!aiMode || !workspaceElement.current) return;
-    const observer = new ResizeObserver((entries) => {
-      const width = entries[0]?.contentRect.width;
-      if (width)
-        setPartnerWidth((previous) => clampPartnerWidth(previous, width));
-    });
-    observer.observe(workspaceElement.current);
-    return () => observer.disconnect();
-  }, [aiMode]);
   function changeCode(next: string) {
     currentDraft.current = { ...currentDraft.current, code: next };
     setCode(next);
@@ -114,6 +116,20 @@ function InterviewSession({
   const [workTab, setWorkTab] = useState<
     "question" | "code" | "approach" | "conversation" | "assistant"
   >(isCodingInterview(config.interviewType) ? "code" : "approach");
+  useEffect(() => {
+    function closePanel(event: KeyboardEvent) {
+      if (event.key === "Escape" && coding) {
+        setMobileProblemOpen(false);
+        setWorkTab((tab) =>
+          ["approach", "conversation", "assistant"].includes(tab)
+            ? "code"
+            : tab,
+        );
+      }
+    }
+    window.addEventListener("keydown", closePanel);
+    return () => window.removeEventListener("keydown", closePanel);
+  }, [coding]);
   const [answers, setAnswers] = useState<
     {
       question: string;
@@ -273,7 +289,6 @@ function InterviewSession({
     currentDraft.current = { code: nextCode, language, questionId: next.id };
     setCode(nextCode);
     if (aiMode) {
-      setTaskExpanded(false);
       setWorkTab("code");
     }
     setNotes("");
@@ -351,6 +366,21 @@ function InterviewSession({
       busy.current = false;
     }
   }
+  const initialSelectionRequested = useRef(false);
+  const selectInitialQuestion = useEffectEvent(() => {
+    void pick();
+  });
+  useEffect(() => {
+    if (
+      coding &&
+      !initialQuestion &&
+      !initialError &&
+      !initialSelectionRequested.current
+    ) {
+      initialSelectionRequested.current = true;
+      selectInitialQuestion();
+    }
+  }, [coding, initialQuestion, initialError]);
   function beginPractice() {
     if (!question) return;
     setStartedAt(Date.now());
@@ -617,298 +647,401 @@ function InterviewSession({
     );
   return (
     <main
-      className={`room shell ${isCodingInterview(config.interviewType) ? "coding-room" : "discussion-room"} ${question ? "" : "no-question"} ${aiMode ? "ide-room" : ""} tab-${workTab}`}
+      className={`room shell ${coding ? "coding-ide" : ""} ${mobileProblemOpen ? "mobile-problem-open" : ""} ${problemCollapsed ? "problem-collapsed" : ""} ${isCodingInterview(config.interviewType) ? "coding-room" : "discussion-room"} ${question ? "" : "no-question"} ${aiMode ? "ide-room" : ""} tab-${workTab}`}
     >
-      <header className="brand">
-        <Link href="/" aria-label="Signal home">
-          <SignalLogo />
-        </Link>
-        <span>
-          {config.interviewType.replace("-", " ")} / {config.role}
-        </span>
-        <div
-          className={`timer ${remaining === 0 ? "expired" : ""}`}
-          aria-label="Time remaining"
-        >
-          {clock}
-        </div>
-      </header>
-      {(error || voice.error) && (
-        <p className="alert" role="alert">
-          {error || voice.error}
-        </p>
-      )}
-      {notice && (
-        <p className="notice" role="status">
-          {notice}
-        </p>
-      )}
-      {startedAt && remaining === 0 && (
-        <p className="notice">
-          Time is up. Finish your thought, then end the session to reflect.
-        </p>
-      )}
-      <div className="ide-toolbar">
-        <div className="ide-session">
-          <div className="sam-presence">
-            <Avatar
-              level={
-                voice.isSpeaking
-                  ? voice.outputLevel
-                  : voice.isMuted
-                    ? 0
-                    : voice.inputLevel
-              }
-              state={
-                starting || voice.status === "connecting"
-                  ? "connecting"
-                  : voice.status === "connected"
-                    ? voice.isSpeaking
-                      ? "speaking"
-                      : "listening"
-                    : "idle"
-              }
-            />
-            <div>
-              <strong>
-                Sam <span>Your interviewer</span>
-              </strong>
-              <p role="status">
-                {starting || voice.status === "connecting"
-                  ? "Connecting…"
-                  : voice.status === "connected"
-                    ? voice.isSpeaking
-                      ? "Speaking"
-                      : "Listening"
-                    : "Ready when you are"}
-              </p>
-              <span className="presence-context">
-                {voice.status === "connected"
-                  ? voice.isMuted
-                    ? "Microphone muted · unmute when you’re ready"
-                    : voice.isSpeaking
-                      ? "Take your time. Your next idea is worth hearing."
-                      : "The floor is yours. Think out loud."
-                  : "Your space to think. Sam is ready to listen."}
-              </span>
-            </div>
+      <header className="interview-header">
+        <div className="brand">
+          <Link href="/" aria-label="Signal home">
+            <SignalLogo />
+          </Link>
+          <span>
+            {config.interviewType.replace("-", " ")} / {config.role}
+          </span>
+          <div
+            className={`timer ${remaining === 0 ? "expired" : ""}`}
+            aria-label="Time remaining"
+          >
+            {clock}
           </div>
         </div>
-        <div className="ide-session-controls">
-          {voice.status !== "connected" ? (
+        <nav className="interview-progress" aria-label="Interview phases">
+          {steps.map((step, index) => (
             <button
-              className="primary"
-              onClick={startVoice}
-              disabled={!question || starting || voice.status === "connecting"}
-            >
-              {starting ? "Connecting…" : "Connect Sam"}
-            </button>
-          ) : (
-            <>
-              <button
-                className="secondary"
-                onClick={voice.toggleMute}
-                aria-pressed={voice.isMuted}
-              >
-                {voice.isMuted ? "Unmute mic" : "Mute mic"}
-              </button>
-              <details className="ide-audio-menu">
-                <summary>Speaker {Math.round(voice.volume * 100)}%</summary>
-                <div className="ide-audio-options">
-                  <label>
-                    Sam’s volume
-                    <input
-                      type="range"
-                      min="0"
-                      max="1"
-                      step="0.05"
-                      value={voice.volume}
-                      onChange={(event) =>
-                        voice.setVolume(Number(event.target.value))
-                      }
-                    />
-                  </label>
-                  <label className="ide-share-toggle">
-                    <input
-                      type="checkbox"
-                      checked={observe}
-                      onChange={(event) => setSharing(event.target.checked)}
-                    />{" "}
-                    Share workspace with Sam
-                  </label>
-                  <button
-                    className="secondary"
-                    onClick={async () => {
-                      try {
-                        await voice.enableAudio();
-                        setNotice("Speaker playback enabled.");
-                      } catch (failure) {
-                        setError(
-                          failure instanceof Error
-                            ? failure.message
-                            : "Could not enable audio.",
-                        );
-                      }
-                    }}
-                  >
-                    Enable speaker
-                  </button>
-                  <button
-                    className="secondary"
-                    onClick={() =>
-                      askSam(
-                        "Repeat your introduction and explain the current task.",
-                      )
-                    }
-                  >
-                    Repeat intro
-                  </button>
-                </div>
-              </details>
-            </>
-          )}
-          <details className="session-menu">
-            <summary>More ···</summary>
-            <div
-              className="session-menu-content"
-              onClick={(event) => {
-                const button = (event.target as HTMLElement).closest("button");
-                if (button?.parentElement === event.currentTarget) {
-                  event.currentTarget
-                    .closest("details")
-                    ?.removeAttribute("open");
-                }
+              title={step}
+              aria-label={`${step} phase`}
+              key={step}
+              type="button"
+              disabled={!startedAt}
+              aria-current={phase === index ? "step" : undefined}
+              onClick={() => {
+                setPhase(index);
+                if (voice.status === "connected")
+                  voice.sendMessage(
+                    `I am moving to the ${step} phase. Guide that phase with one concise follow-up.`,
+                  );
               }}
             >
-              {isCodingInterview(config.interviewType) &&
-                workTab !== "code" && (
-                  <button
-                    className="secondary"
-                    onClick={() => setWorkTab("code")}
-                  >
-                    Back to editor
-                  </button>
-                )}
-              <button
-                className="secondary"
-                onClick={() => setWorkTab("approach")}
-              >
-                My approach
-              </button>
-              <button
-                className="secondary"
-                onClick={() => setWorkTab("conversation")}
-              >
-                Sam chat
-              </button>
-              <button
-                className="secondary"
-                onClick={pick}
-                disabled={loading || starting}
-              >
-                {loading ? "Selecting…" : question ? "Next task" : "Pick task"}
-              </button>
-              <label className="session-phase">
-                Interview phase
-                <select
-                  value={phase}
-                  disabled={!startedAt}
-                  onChange={(event) => {
-                    const next = Number(event.target.value);
-                    setPhase(next);
-                    if (voice.status === "connected")
-                      askSam(
-                        `I am moving to the ${steps[next]} phase. Guide that phase with one concise follow-up.`,
-                      );
-                  }}
-                >
-                  {steps.map((step, index) => (
-                    <option key={step} value={index}>
-                      {step}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <button
-                className="secondary"
-                disabled={voice.status !== "connected"}
-                onClick={() =>
-                  askSam(
-                    "Give me one small hint, then ask a question that helps me think.",
-                  )
+              <span>{index < phase ? "✓" : `0${index + 1}`}</span>
+              <span className="phase-name">{step}</span>
+              <i />
+            </button>
+          ))}
+        </nav>
+        <div className="ide-toolbar">
+          <div className="ide-session">
+            <div className="sam-presence">
+              <Avatar
+                level={
+                  voice.isSpeaking
+                    ? voice.outputLevel
+                    : voice.isMuted
+                      ? 0
+                      : voice.inputLevel
                 }
-              >
-                Get a hint
-              </button>
-              <button
-                className="secondary"
-                disabled={voice.status !== "connected"}
-                onClick={() =>
-                  askSam(
-                    "Challenge my current approach. Ask one question about an assumption or edge case.",
-                  )
+                state={
+                  starting || voice.status === "connecting"
+                    ? "connecting"
+                    : voice.status === "connected"
+                      ? voice.isSpeaking
+                        ? "speaking"
+                        : "listening"
+                      : "idle"
                 }
-              >
-                Challenge my approach
-              </button>
-              <details className="question-source-menu">
-                <summary>Question source</summary>
-                <p className="fine">{total} questions available in this bank</p>
-                <CustomQuestionBank
-                  count={customBank.length}
-                  active={source === "custom"}
-                  onLoad={loadCustomBank}
-                  onCurated={() => {
-                    setSource("curated");
-                    setNotice(
-                      "Curated bank selected. Pick your next question.",
-                    );
-                  }}
-                />
-              </details>
+              />
+              <div>
+                <strong>
+                  Sam <span>Your interviewer</span>
+                </strong>
+                <p role="status">
+                  {starting || voice.status === "connecting"
+                    ? "Connecting…"
+                    : voice.status === "connected"
+                      ? voice.isSpeaking
+                        ? "Speaking"
+                        : voice.isMuted
+                          ? "Mic muted"
+                          : "Listening"
+                      : "Ready when you are"}
+                </p>
+                <span className="presence-context">
+                  {voice.status === "connected"
+                    ? voice.isMuted
+                      ? "Microphone muted · unmute when you’re ready"
+                      : voice.isSpeaking
+                        ? "Take your time. Your next idea is worth hearing."
+                        : "The floor is yours. Think out loud."
+                    : "Your space to think. Sam is ready to listen."}
+                </span>
+              </div>
             </div>
-          </details>
-          {!startedAt ? (
-            <button
-              className="secondary"
-              disabled={!question}
-              onClick={beginPractice}
-            >
-              Start timer
-            </button>
-          ) : (
-            <button
-              className="secondary"
-              disabled={ending || starting}
-              onClick={finish}
-            >
-              {ending ? "Ending…" : "End & review"}
-            </button>
-          )}
+          </div>
+          <div className="ide-session-controls">
+            {voice.status !== "connected" ? (
+              <button
+                className="primary"
+                onClick={startVoice}
+                disabled={
+                  !question || starting || voice.status === "connecting"
+                }
+              >
+                {starting ? "Connecting…" : "Connect Sam"}
+              </button>
+            ) : (
+              <>
+                <button
+                  className="secondary"
+                  onClick={voice.toggleMute}
+                  aria-pressed={voice.isMuted}
+                >
+                  {voice.isMuted ? "Unmute mic" : "Mute mic"}
+                </button>
+                <details className="ide-audio-menu">
+                  <summary>Speaker {Math.round(voice.volume * 100)}%</summary>
+                  <div className="ide-audio-options">
+                    <label>
+                      Sam’s volume
+                      <input
+                        type="range"
+                        min="0"
+                        max="1"
+                        step="0.05"
+                        value={voice.volume}
+                        onChange={(event) =>
+                          voice.setVolume(Number(event.target.value))
+                        }
+                      />
+                    </label>
+                    <label className="ide-share-toggle">
+                      <input
+                        type="checkbox"
+                        checked={observe}
+                        onChange={(event) => setSharing(event.target.checked)}
+                      />{" "}
+                      Share workspace with Sam
+                    </label>
+                    <button
+                      className="secondary"
+                      onClick={async () => {
+                        try {
+                          await voice.enableAudio();
+                          setNotice("Speaker playback enabled.");
+                        } catch (failure) {
+                          setError(
+                            failure instanceof Error
+                              ? failure.message
+                              : "Could not enable audio.",
+                          );
+                        }
+                      }}
+                    >
+                      Enable speaker
+                    </button>
+                    <button
+                      className="secondary"
+                      onClick={() =>
+                        askSam(
+                          "Repeat your introduction and explain the current task.",
+                        )
+                      }
+                    >
+                      Repeat intro
+                    </button>
+                  </div>
+                </details>
+              </>
+            )}
+            <details className="session-menu">
+              <summary>More ···</summary>
+              <div
+                className="session-menu-content"
+                onClick={(event) => {
+                  const button = (event.target as HTMLElement).closest(
+                    "button",
+                  );
+                  if (button?.parentElement === event.currentTarget) {
+                    event.currentTarget
+                      .closest("details")
+                      ?.removeAttribute("open");
+                  }
+                }}
+              >
+                {isCodingInterview(config.interviewType) &&
+                  workTab !== "code" && (
+                    <button
+                      className="secondary"
+                      onClick={() => setWorkTab("code")}
+                    >
+                      Back to editor
+                    </button>
+                  )}
+                <button
+                  className="secondary"
+                  onClick={() => setWorkTab("approach")}
+                >
+                  My approach
+                </button>
+                <button
+                  className="secondary"
+                  onClick={() => setWorkTab("conversation")}
+                >
+                  Sam chat
+                </button>
+                <button
+                  className="secondary"
+                  onClick={pick}
+                  disabled={loading || starting}
+                >
+                  {loading
+                    ? "Selecting…"
+                    : question
+                      ? "Next task"
+                      : "Pick task"}
+                </button>
+                <label className="session-phase">
+                  Interview phase
+                  <select
+                    value={phase}
+                    disabled={!startedAt}
+                    onChange={(event) => {
+                      const next = Number(event.target.value);
+                      setPhase(next);
+                      if (voice.status === "connected")
+                        askSam(
+                          `I am moving to the ${steps[next]} phase. Guide that phase with one concise follow-up.`,
+                        );
+                    }}
+                  >
+                    {steps.map((step, index) => (
+                      <option key={step} value={index}>
+                        {step}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <button
+                  className="secondary"
+                  disabled={voice.status !== "connected"}
+                  onClick={() =>
+                    askSam(
+                      "Give me one small hint, then ask a question that helps me think.",
+                    )
+                  }
+                >
+                  Get a hint
+                </button>
+                <button
+                  className="secondary"
+                  disabled={voice.status !== "connected"}
+                  onClick={() =>
+                    askSam(
+                      "Challenge my current approach. Ask one question about an assumption or edge case.",
+                    )
+                  }
+                >
+                  Challenge my approach
+                </button>
+                <details className="question-source-menu">
+                  <summary>Question source</summary>
+                  <p className="fine">
+                    {total} questions available in this bank
+                  </p>
+                  <CustomQuestionBank
+                    count={customBank.length}
+                    active={source === "custom"}
+                    onLoad={loadCustomBank}
+                    onCurated={() => {
+                      setSource("curated");
+                      setNotice(
+                        "Curated bank selected. Pick your next question.",
+                      );
+                    }}
+                  />
+                </details>
+              </div>
+            </details>
+            {!startedAt ? (
+              <button
+                className="secondary"
+                disabled={!question}
+                onClick={beginPractice}
+              >
+                Start timer
+              </button>
+            ) : (
+              <button
+                className="secondary"
+                disabled={ending || starting}
+                onClick={finish}
+              >
+                {ending ? "Ending…" : "End & review"}
+              </button>
+            )}
+          </div>
         </div>
-      </div>
 
-      <nav className="interview-progress" aria-label="Interview phases">
-        {steps.map((step, index) => (
-          <button
-            key={step}
-            type="button"
-            disabled={!startedAt}
-            aria-current={phase === index ? "step" : undefined}
-            onClick={() => {
-              setPhase(index);
-              if (voice.status === "connected")
-                voice.sendMessage(
-                  `I am moving to the ${step} phase. Guide that phase with one concise follow-up.`,
-                );
-            }}
-          >
-            <span>{index < phase ? "✓" : `0${index + 1}`}</span>
-            {step}
-            <i />
-          </button>
-        ))}
-      </nav>
+        {coding && (
+          <div className="workspace-actions" aria-label="Workspace panels">
+            <button
+              type="button"
+              className="desktop-problem-toggle"
+              aria-pressed={!problemCollapsed}
+              onClick={() => setProblemCollapsed(!problemCollapsed)}
+              title="Toggle problem description"
+            >
+              Problem
+            </button>
+            <button
+              type="button"
+              className="mobile-problem-toggle"
+              aria-pressed={mobileProblemOpen}
+              onClick={() => setMobileProblemOpen(!mobileProblemOpen)}
+            >
+              {mobileProblemOpen ? "Back to code" : "Problem"}
+            </button>
+            {aiMode && (
+              <button
+                type="button"
+                aria-pressed={workTab === "assistant"}
+                onClick={() =>
+                  setWorkTab(workTab === "assistant" ? "code" : "assistant")
+                }
+              >
+                AI partner
+              </button>
+            )}
+            <button
+              type="button"
+              aria-pressed={workTab === "approach"}
+              onClick={() =>
+                setWorkTab(workTab === "approach" ? "code" : "approach")
+              }
+            >
+              Notes
+            </button>
+            <button
+              type="button"
+              aria-pressed={workTab === "conversation"}
+              onClick={() =>
+                setWorkTab(workTab === "conversation" ? "code" : "conversation")
+              }
+            >
+              Sam chat
+            </button>
+            {aiMode && (
+              <button
+                type="button"
+                aria-pressed={workTab === "assistant"}
+                onClick={() =>
+                  setWorkTab(workTab === "assistant" ? "code" : "assistant")
+                }
+              >
+                ✦ Partner
+              </button>
+            )}
+          </div>
+        )}
+      </header>
+      <div className="session-notifications">
+        {bannerError && (
+          <p className="alert" role="alert">
+            {bannerError}
+            <button
+              type="button"
+              aria-label="Dismiss error"
+              onClick={() => {
+                setError("");
+                setDismissedVoiceError(voice.error || "");
+              }}
+            >
+              ×
+            </button>
+          </p>
+        )}
+        {notice && (
+          <p className="notice" role="status">
+            {notice}
+            <button
+              type="button"
+              aria-label="Dismiss notification"
+              onClick={() => setNotice("")}
+            >
+              ×
+            </button>
+          </p>
+        )}
+        {startedAt && remaining === 0 && !timeNoticeDismissed && (
+          <p className="notice">
+            Time is up. Finish your thought, then end the session to reflect.
+            <button
+              type="button"
+              aria-label="Dismiss timer notification"
+              onClick={() => setTimeNoticeDismissed(true)}
+            >
+              ×
+            </button>
+          </p>
+        )}
+      </div>
       {loading && (
         <div className="question-loading" role="status">
           <span />
@@ -922,9 +1055,9 @@ function InterviewSession({
           className="workspace"
           ref={workspaceElement}
           style={
-            aiMode
-              ? ({ "--partner-width": `${partnerWidth}px` } as CSSProperties)
-              : undefined
+            {
+              "--problem-width": `${problemWidth}%`,
+            } as CSSProperties
           }
         >
           <nav className="work-tabs" aria-label="Workspace view">
@@ -957,21 +1090,10 @@ function InterviewSession({
                 </button>
               ))}
           </nav>
-          <details
+          <section
             className={`card problem ${loading ? "is-loading" : ""}`}
             aria-busy={loading}
-            open={aiMode ? taskExpanded : true}
-            onToggle={(event) => {
-              if (aiMode) setTaskExpanded(event.currentTarget.open);
-            }}
           >
-            <summary className="ide-task-summary" hidden={!aiMode}>
-              <span>{question?.title || "Choose a task to begin"}</span>
-              <small>
-                {taskExpanded ? "Collapse task" : "Read task & requirements"}
-              </small>
-              <i aria-hidden="true">⌄</i>
-            </summary>
             <div className="section-top">
               <p className="eyebrow">
                 {aiMode
@@ -1078,7 +1200,32 @@ function InterviewSession({
                 </button>
               </div>
             )}
-          </details>
+          </section>
+          {coding && (
+            <PaneDivider
+              orientation="vertical"
+              label="Resize problem description"
+              value={problemWidth}
+              min={20}
+              max={45}
+              onDrag={(x) => {
+                const bounds =
+                  workspaceElement.current?.getBoundingClientRect();
+                if (bounds)
+                  setProblemWidth(
+                    Math.max(
+                      20,
+                      Math.min(45, ((x - bounds.left) / bounds.width) * 100),
+                    ),
+                  );
+              }}
+              onStep={(direction) =>
+                setProblemWidth((width) =>
+                  Math.max(20, Math.min(45, width + direction * 2)),
+                )
+              }
+            />
+          )}
           {question && (
             <>
               {isCodingInterview(config.interviewType) && (
@@ -1095,61 +1242,6 @@ function InterviewSession({
                   voiceConnected={voice.status === "connected"}
                   compactTests
                 />
-              )}
-              {aiMode && (
-                <div
-                  className="ide-splitter"
-                  role="separator"
-                  aria-label="Resize coding assistant panel"
-                  aria-orientation="vertical"
-                  aria-valuemin={260}
-                  aria-valuemax={520}
-                  aria-valuenow={partnerWidth}
-                  tabIndex={0}
-                  onPointerDown={(event) => {
-                    event.preventDefault();
-                    event.currentTarget.setPointerCapture(event.pointerId);
-                  }}
-                  onPointerMove={(event) => {
-                    if (
-                      event.currentTarget.hasPointerCapture(event.pointerId)
-                    ) {
-                      const bounds =
-                        workspaceElement.current?.getBoundingClientRect();
-                      if (bounds)
-                        setPartnerWidth(
-                          clampPartnerWidth(
-                            bounds.right - event.clientX,
-                            bounds.width,
-                          ),
-                        );
-                    }
-                  }}
-                  onPointerUp={(event) => {
-                    if (event.currentTarget.hasPointerCapture(event.pointerId))
-                      event.currentTarget.releasePointerCapture(
-                        event.pointerId,
-                      );
-                  }}
-                  onKeyDown={(event) => {
-                    if (
-                      event.key === "ArrowLeft" ||
-                      event.key === "ArrowRight"
-                    ) {
-                      event.preventDefault();
-                      const width =
-                        workspaceElement.current?.clientWidth ?? 1200;
-                      setPartnerWidth((previous) =>
-                        clampPartnerWidth(
-                          previous + (event.key === "ArrowLeft" ? 24 : -24),
-                          width,
-                        ),
-                      );
-                    }
-                  }}
-                >
-                  <span />
-                </div>
               )}
               {aiMode && (
                 <CodingPartner
@@ -1191,7 +1283,7 @@ function InterviewSession({
                 />
               )}
               <section className="card notes-panel">
-                {aiMode && (
+                {coding && (
                   <div className="ide-drawer-heading">
                     <h3>My approach</h3>
                     <button
@@ -1281,12 +1373,12 @@ function InterviewSession({
             <button
               className="transcript-toggle"
               onClick={() => {
-                if (aiMode) setWorkTab("code");
+                if (coding) setWorkTab("code");
                 else setShowTranscript(!showTranscript);
               }}
               aria-expanded={showTranscript || workTab === "conversation"}
             >
-              Conversation transcript{" "}
+              {coding ? "Close conversation ×" : "Conversation transcript"}{" "}
               <span>
                 {voice.transcript.length} messages {showTranscript ? "−" : "+"}
               </span>
